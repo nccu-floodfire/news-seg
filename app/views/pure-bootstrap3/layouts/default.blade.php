@@ -19,16 +19,13 @@
 	<nav class="navbar navbar-default navbar-static-top" role="navigation">
 		<div class="container">
 			<div class="row">
-			<div class="navbar-header">
-				<a href="/" class="navbar-brand">NewsSeg</a>
-			</div>
-			<div class="collapse navbar-collapse bs-navbar-collapse">
+				<div class="navbar-header">
+					<a href="/" class="navbar-brand">NewsSeg</a>
+				</div>
 				<ul class="nav navbar-nav">
 					<li><a href="/credit-and-thanks">About</a></li>
 				</ul>
 			</div>
-			</div>
-
 		</div>
 	</nav>
 	<div class="container">
