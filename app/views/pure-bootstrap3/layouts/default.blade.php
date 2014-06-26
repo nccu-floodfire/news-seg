@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Demo</title>
+	<title>NewsSeg 新聞每日詞頻統計</title>
 	<meta name="description" content="">
 	<meta name="author" content="">
 	<link rel="shortcut icon" href="assets/ico/favicon.ico">
