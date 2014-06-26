@@ -1,0 +1,14 @@
+# laravel general
+/bootstrap/compiled.php
+/vendor
+composer.phar
+#composer.lock
+.env.*.php
+.env.php
+
+# general
+.DS_Store
+Thumbs.db
+*.sqlite
+node_modules/
+

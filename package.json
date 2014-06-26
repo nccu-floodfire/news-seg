@@ -1,0 +1,28 @@
+{
+  "name": "news-seg",
+  "version": "0.0.0",
+  "description": "[![Build Status](https://travis-ci.org/laravel/framework.svg)](https://travis-ci.org/laravel/framework) [![Total Downloads](https://img.shields.io/packagist/dm/laravel/framework.svg)](https://packagist.org/packages/laravel/framework) [![Latest Version](http://img.shields.io/github/tag/laravel/framework.svg)](https://github.com/laravel/framework/releases) [![Dependency Status](https://www.versioneye.com/php/laravel:framework/badge.svg)](https://www.versioneye.com/php/laravel:framework)",
+  "main": "gulpfile.js",
+  "scripts": {
+    "build": "gulp",
+    "watch": "gulp watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@bitbucket.org:unisharp/core-laravel.git"
+  },
+  "author": "",
+  "license": "BSD",
+  "devDependencies": {
+    "gulp": "^3.6.2",
+    "gulp-stylus": "^1.0.2",
+    "gulp-watch": "^0.6.4",
+    "gulp-livescript": "^0.2.1",
+    "gulp-util": "^2.2.14",
+    "stylus": "0.43.1",
+    "nib": "~1.0.2"
+  },
+  "dependencies": {
+    "redis-commander": "~0.2.1"
+  }
+}
