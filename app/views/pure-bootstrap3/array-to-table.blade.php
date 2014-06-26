@@ -12,7 +12,7 @@ table a:active  {color:#999;}
 ?>
 <div class="row">
 	<div class="col-md-12">
-		<h3><a href="/{{{$prev}}}">prev <span class="glyphicon glyphicon-chevron-left"></span></a> Date: {{{ $date }}} <a href="/{{{$next}}}"><span class="glyphicon glyphicon-chevron-right"></span> next</a></h3>
+		<h3><a href="/{{{$prev}}}">prev <span class="glyphicon glyphicon-chevron-left"></span></a> {{{ $date }}} <a href="/{{{$next}}}"><span class="glyphicon glyphicon-chevron-right"></span> next</a></h3>
 		@if (count($data) > 0 )
 		<table class="table">
 			<tr>
