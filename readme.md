@@ -5,7 +5,7 @@
 
 ## How to start
 
- * Download a daily redis db from [here](http://news.source.today/redis.rdb) and import to your redis server
+ * Download a daily redis db from [here](http://news.source.today/redis.rdb) and import to your redis server (md5sum: aa9491e99e5f31706ea5f8e6f81e5f2f)
  * `make init`
  * `php artisan serve`
 
