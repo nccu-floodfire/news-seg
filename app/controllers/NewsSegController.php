@@ -36,15 +36,18 @@ class NewsSegController extends BaseController {
 		if (!$date) {
 			$date = date('Y-m-d');
 		}
-		$prevDate = date('Y-m-d', strtotime("{$date} - 1 days"));
 
 		$redis = \RedisL4::connection();
-		$prevRes = array();
-
 		$res = $redis->zRevRange("CKIP:TERMS:$date", 0, 600, 'WITHSCORES');
-
 		if (count($res) > 0) {
-			$prevRes = $redis->zRevRange("CKIP:TERMS:$prevDate", 0, 600, 'WITHSCORES');
+			for ($i=30; $i>=1; $i--) {
+				$theDate = date('Y-m-d', strtotime("{$date} - {$i} days"));
+				$theRes = $redis->zRevRange("CKIP:TERMS:$theDate", 0, 300, 'WITHSCORES' );
+
+				if ($i == 1)
+					$prevRes = $theRes;
+			}
+
 			foreach ($redis->sMembers('CKIP:TERMS:BLACK_SET') as $element)
 				$black_set[$element] = '';
 
