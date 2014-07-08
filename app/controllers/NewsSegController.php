@@ -64,7 +64,7 @@ class NewsSegController extends BaseController {
 			for ($i=30; $i>=1; $i--) {
 				$theDate = date('Y-m-d', strtotime("$date - $i days"));
 				$theRes = $redis->zRevRange("CKIP:TERMS:$theDate", 0, $dataNum, 'WITHSCORES');
-				if (count($theRes == 0)) {
+				if (count($theRes) != 0) {
 					$theRes = $this->_changeResStruct($theRes, $black_set, true);
 					$pastTimeResourses[] = $theRes;
 				}
