@@ -37,15 +37,18 @@ table a:active  {color:#999;}
 						$image = '<span class="glyphicon glyphicon-arrow-down"></span>';
 					}
 
-					if ($rankDiff > 0) {
-						$class = 'warning';
-					}
-					if ($rankDiff < 0) {
-						$class = 'active';
-					}
-					if ($rankDiff > 30) {
+					if ($val['isHot'])
 						$class = 'danger';
-					}
+
+#					if ($rankDiff > 0) {
+#						$class = 'warning';
+#					}
+#					if ($rankDiff < 0) {
+#						$class = 'active';
+#					}
+#					if ($rankDiff > 30) {
+#						$class = 'danger';
+#					}
 				} else {
 					$class = 'danger';
 					$image = '<span class="glyphicon glyphicon-arrow-up"></span>';
