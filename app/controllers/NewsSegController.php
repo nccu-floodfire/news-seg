@@ -77,7 +77,15 @@ class NewsSegController extends BaseController {
 						$aveRate += $pastTimeRes[$element['term']]['rate'];
 				}
 				$aveRate /= count($pastTimeResourses);
-				if ($aveRate == 0 or $element['rate'] / $aveRate >= 4)
+
+				if ($aveRate == 0) {
+					$element['heatScore'] = 'NEW';
+				}
+				else {
+					$element['heatScore'] = round($element['rate'] / $aveRate, 2);
+				}
+
+				if ($element['heatScore'] == 0 or $element['heatScore'] >= 4)
 					$element['isHot'] = true;
 				else
 					$element['isHot'] = false;

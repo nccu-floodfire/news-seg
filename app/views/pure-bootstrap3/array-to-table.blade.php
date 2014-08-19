@@ -20,6 +20,7 @@ table a:active  {color:#999;}
 				<th>Rank Change</th>
 				<th>Term</th>
 				<th>Score</th>
+				<th>Heat Score</th>
 			</tr>
 			@foreach ($data as $key => $val)
 			<?php
@@ -59,6 +60,7 @@ table a:active  {color:#999;}
 				<td>{{ $image }} {{{ $rankDiff }}}</td>
 				<td><a href='https://www.google.com.tw/search?hl=zh-TW&gl=tw&tbm=nws&q={{{ $val['term'] }}}' target="_blank"><span class="glyphicon glyphicon-share-alt"></span></a> {{{ $val['term'] }}}</td>
 				<td>{{{ $val['score'] }}}</td>
+				<td>{{{ $val['heatScore'] }}}</td>
 			</tr>
 			@endforeach
 			<tr>
@@ -66,6 +68,7 @@ table a:active  {color:#999;}
 				<th>Rank Change</th>
 				<th>Term</th>
 				<th>Score</th>
+				<th>Heat Score</th>
 			</tr>
 		</table>
 		@else
