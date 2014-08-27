@@ -26,5 +26,7 @@ Route::get('/credit-and-thanks', function() {
 
 Route::get('/', array( 'as' => 'home', 'uses' =>'NewsSegController@index'));
 Route::get('/news-terms/{date}', array( 'as' => 'home', 'uses' =>'NewsSegController@index'));
+Route::get('/keyword-terms/{keyword}', array( 'as' => 'home', 'uses' =>'NewsSegController@keywordTerms'));
+Route::get('/keyword-terms/{keyword}/{date}', array( 'as' => 'home', 'uses' =>'NewsSegController@keywordTerms'));
 Route::get('/{date}', array( 'as' => 'home', 'uses' =>'NewsSegController@index'));
 Route::get('/{date}/{all}', array( 'as' => 'home', 'uses' =>'NewsSegController@index'));

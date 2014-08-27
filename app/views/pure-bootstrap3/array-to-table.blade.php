@@ -1,6 +1,6 @@
 @extends('pure-bootstrap3.layouts.default')
 <style>
-table a:link    {color:#999;}
+table a:link	{color:#999;}
 table a:visited {color:#999;}
 table a:hover   {color:#999;}
 table a:active  {color:#999;}
@@ -9,10 +9,18 @@ table a:active  {color:#999;}
 <?php
 	$prev = date('Y-m-d', strtotime("{$date} - 1 days"));
 	$next = date('Y-m-d', strtotime("{$date} + 1 days"));
+	if (isset($keyword)) {
+		$prev = "keyword-terms/$keyword/$prev";
+		$next = "keyword-terms/$keyword/$next";
+	}
 ?>
 <div class="row">
 	<div class="col-md-12">
-		<h3><a href="/{{{$prev}}}">prev <span class="glyphicon glyphicon-chevron-left"></span></a> {{{ $date }}} <a href="/{{{$next}}}"><span class="glyphicon glyphicon-chevron-right"></span> next</a></h3>
+		<h3>
+			<a href="/{{{$prev}}}">prev <span class="glyphicon glyphicon-chevron-left"></span></a>
+			{{{ $date }}}
+			<a href="/{{{$next}}}"><span class="glyphicon glyphicon-chevron-right"></span> next </a>
+		</h3>
 		@if (count($data) > 0 )
 		<table class="table">
 			<tr>
@@ -76,7 +84,7 @@ table a:active  {color:#999;}
 		@endif
 
 
-        <hr />
+		<hr />
 	</div>
 </div>
 @stop
