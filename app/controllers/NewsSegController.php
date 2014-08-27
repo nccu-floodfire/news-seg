@@ -28,15 +28,23 @@ class NewsSegController extends BaseController {
 	}
 
 	public function index($date = null, $all_terms = null) {
+		if ($all_terms === null) {
+			$all_terms = Input::get('all');
+		}
+
+		return $this->_yieldView($date, $all_terms, null);
+	}
+
+	public function keywordTerms($keyword = null, $date = null) {
+		return $this->_yieldView($date, null, $keyword);
+	}
+
+	private function _yieldView($date, $all_terms, $keyword) {
 		$black_set = array();
 
 		if (!$date) {
 			$date = Input::get('date');
 			$date = trim($date);
-		}
-
-		if ($all_terms === null) {
-			$all_terms = Input::get('all');
 		}
 
 		if (!$date) {
@@ -45,7 +53,11 @@ class NewsSegController extends BaseController {
 
 		$redis = \RedisL4::connection();
 		$dataNum = 1000;
-		$res = $redis->zRevRange("CKIP:TERMS:$date", 0, $dataNum, 'WITHSCORES');
+		if (isset($keyword)) {
+			$res = $redis->zRevRange("CKIP:TERMS:$keyword:$date", 0, $dataNum, 'WITHSCORES');
+		} else {
+			$res = $redis->zRevRange("CKIP:TERMS:$date", 0, $dataNum, 'WITHSCORES');
+		}
 		if (count($res) > 0) {
 			$prevDate = date('Y-m-d', strtotime("$date - 1 days"));
 			$prevRes = $redis->zRevRange("CKIP:TERMS:$prevDate", 0, $dataNum, 'WITHSCORES');
@@ -80,26 +92,27 @@ class NewsSegController extends BaseController {
 
 				if ($aveRate == 0) {
 					$element['heatScore'] = 'NEW';
-				}
-				else {
+				} else {
 					$element['heatScore'] = round($element['rate'] / $aveRate, 2);
 				}
 
-				if ($element['heatScore'] == 0 or $element['heatScore'] >= 4)
+				if ($element['heatScore'] == 0 or $element['heatScore'] >= 4) {
 					$element['isHot'] = true;
-				else
+				} else {
 					$element['isHot'] = false;
+				}
 
-				if (isset($prevRes[$element['term']]))
+				if (isset($prevRes[$element['term']])) {
 					$element['rankDiff'] = $prevRes[$element['term']]['rank'] - $element['rank'];
-				else
+				} else {
 					$element['rankDiff'] = '---';
+				}
 			}
 		} else {
 			// no data
 		}
 
-		return View::make('pure-bootstrap3.array-to-table', array('data' => $res, 'date' => $date));
-	}
+		return View::make('pure-bootstrap3.array-to-table', array('data' => $res, 'date' => $date, 'keyword' => $keyword));
+   }
 
 }
