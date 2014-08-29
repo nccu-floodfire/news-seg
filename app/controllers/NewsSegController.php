@@ -60,7 +60,11 @@ class NewsSegController extends BaseController {
 		}
 		if (count($res) > 0) {
 			$prevDate = date('Y-m-d', strtotime("$date - 1 days"));
-			$prevRes = $redis->zRevRange("CKIP:TERMS:$prevDate", 0, $dataNum, 'WITHSCORES');
+			if (isset($keyword)) {
+				$prevRes = $redis->zRevRange("CKIP:TERMS:$keyword:$prevDate", 0, $dataNum, 'WITHSCORES');
+			} else {
+				$prevRes = $redis->zRevRange("CKIP:TERMS:$prevDate", 0, $dataNum, 'WITHSCORES');
+			}
 
 			foreach ($redis->sMembers('CKIP:TERMS:BLACK_SET') as $element)
 				$black_set[$element] = '';
