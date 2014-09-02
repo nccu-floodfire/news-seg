@@ -7,8 +7,15 @@ table a:active  {color:#999;}
 </style>
 @section('main')
 <?php
-	$prev = date('Y-m-d', strtotime("{$date} - 1 days"));
-	$next = date('Y-m-d', strtotime("{$date} + 1 days"));
+	if ($display === 'day') {
+		$prev = date('Y-m-d', strtotime("{$date} - 1 days"));
+		$next = date('Y-m-d', strtotime("{$date} + 1 days"));
+	} else if ($display === 'week') {
+		$prev = date('Y-m-d', strtotime("{$date} - 7 days"));
+		$next = date('Y-m-d', strtotime("{$date} + 7 days"));
+		$startDate = date('Y-m-d', strtotime("{$date} - 6 days"));
+		$date = "$startDate ~ $date";
+	}
 	if (isset($keyword)) {
 		$prev = "keyword-terms/$keyword/$display/$prev";
 		$next = "keyword-terms/$keyword/$display/$next";

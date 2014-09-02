@@ -64,6 +64,16 @@ class NewsSegController extends BaseController {
 				$res = $redis->zRevRange("CKIP:TERMS:$date", 0, $dataNum, 'WITHSCORES');
 			}
 		} else if ($display === 'week') {
+			if (isset($keyword)) {
+				$redis->zUnionStore('CKIP:TERMS:TEMP', 1, "CKIP:TERMS:柯文哲:$date");
+				for ($i=1; $i<=6; $i++) {
+					$nowDate = date('Y-m-d', strtotime("$date - $i days"));
+					$redis->zUnionStore('CKIP:TERMS:TEMP', 2, 'CKIP:TERMS:TEMP', "CKIP:TERMS:柯文哲:$nowDate");
+				}
+				$res = $redis->zRevRange("CKIP:TERMS:TEMP", 0, $dataNum, 'WITHSCORES');
+			} else {
+				$res = $redis->zRevRange("CKIP:TERMS:$date", 0, $dataNum, 'WITHSCORES');
+			}
 		}
 		if (count($res) > 0) {
 			$prevDate = date('Y-m-d', strtotime("$date - 1 days"));
