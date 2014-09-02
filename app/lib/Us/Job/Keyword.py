@@ -103,7 +103,7 @@ class Keyword:
 				time = record[2]
 				title = record[3]
 				body = record[4]
-				
+
 				handleDataCount += 1;
 				if (word == None) or (word != None and (word in title or word in body)):
 					newsDateTime = datetime.datetime.fromtimestamp(time).strftime('%Y-%m-%d')
@@ -111,11 +111,13 @@ class Keyword:
 					body = body.replace('\r', '')
 					dataDict = {'Published': newsDateTime, 'SubjectHtml': title, 'TextHtml': body}
 					dataArr.append(dataDict)
-					lastId = newsId
-				if handleDataCount == limit:
+
+				if handleDataCount >= limit:
 					isOver = True
 					break
-
+				lastId = newsId
+			# end for record in tmpData
+                # end while
 		self.cursor.close()
 		self.con.close()
 		return dataArr

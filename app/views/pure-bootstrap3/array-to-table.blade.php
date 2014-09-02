@@ -31,8 +31,8 @@ table a:active  {color:#999;}
 				<th>#</th>
 				<th>Rank Change</th>
 				<th>Term</th>
+				<th>Count</th>
 				<th>Score</th>
-				<th>Heat Score</th>
 			</tr>
 			@foreach ($data as $key => $val)
 			<?php
@@ -79,8 +79,8 @@ table a:active  {color:#999;}
 				<th>#</th>
 				<th>Rank Change</th>
 				<th>Term</th>
+				<th>Count</th>
 				<th>Score</th>
-				<th>Heat Score</th>
 			</tr>
 		</table>
 		@else
