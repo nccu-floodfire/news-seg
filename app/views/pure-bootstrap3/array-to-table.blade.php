@@ -10,12 +10,16 @@ table a:active  {color:#999;}
 	$prev = date('Y-m-d', strtotime("{$date} - 1 days"));
 	$next = date('Y-m-d', strtotime("{$date} + 1 days"));
 	if (isset($keyword)) {
-		$prev = "keyword-terms/$keyword/$prev";
-		$next = "keyword-terms/$keyword/$next";
+		$prev = "keyword-terms/$keyword/$display/$prev";
+		$next = "keyword-terms/$keyword/$display/$next";
 	}
 ?>
 <div class="row">
 	<div class="col-md-12">
+		@if (isset($keyword))
+			<a href="/keyword-terms/{{{ $keyword }}}/day">日顯示</a>
+			<a href="/keyword-terms/{{{ $keyword }}}/week">週顯示</a>
+		@endif
 		<h3>
 			<a href="/{{{$prev}}}">prev <span class="glyphicon glyphicon-chevron-left"></span></a>
 			{{{ $date }}}
