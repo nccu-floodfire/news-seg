@@ -117,7 +117,7 @@ class Keyword:
 					break
 				lastId = newsId
 			# end for record in tmpData
-                # end while
+				# end while
 		self.cursor.close()
 		self.con.close()
 		return dataArr
