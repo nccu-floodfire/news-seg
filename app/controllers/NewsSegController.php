@@ -65,10 +65,10 @@ class NewsSegController extends BaseController {
 			}
 		} else if ($display === 'week') {
 			if (isset($keyword)) {
-				$redis->zUnionStore('CKIP:TERMS:TEMP', 1, "CKIP:TERMS:柯文哲:$date");
+				$redis->zUnionStore('CKIP:TERMS:TEMP', 1, "CKIP:TERMS:$keyword:$date");
 				for ($i=1; $i<=6; $i++) {
 					$nowDate = date('Y-m-d', strtotime("$date - $i days"));
-					$redis->zUnionStore('CKIP:TERMS:TEMP', 2, 'CKIP:TERMS:TEMP', "CKIP:TERMS:柯文哲:$nowDate");
+					$redis->zUnionStore('CKIP:TERMS:TEMP', 2, 'CKIP:TERMS:TEMP', "CKIP:TERMS:$keyword:$nowDate");
 				}
 				$res = $redis->zRevRange("CKIP:TERMS:TEMP", 0, $dataNum, 'WITHSCORES');
 			} else {
