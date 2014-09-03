@@ -24,8 +24,13 @@ table a:active  {color:#999;}
 <div class="row">
 	<div class="col-md-12">
 		@if (isset($keyword))
-			<a href="/keyword-terms/{{{ $keyword }}}/day">日顯示</a>
-			<a href="/keyword-terms/{{{ $keyword }}}/week">週顯示</a>
+            @if ($display == "day")
+                <span>日顯示</span>
+                <a href="/keyword-terms/{{{ $keyword }}}/week">週顯示</a>
+            @elseif ($display == "week")
+                <a href="/keyword-terms/{{{ $keyword }}}/day">日顯示</a>
+                <span>週顯示</span>
+            @endif
 		@endif
 		<h3>
 			<a href="/{{{$prev}}}">prev <span class="glyphicon glyphicon-chevron-left"></span></a>
