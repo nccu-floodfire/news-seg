@@ -32,15 +32,19 @@ class NewsSegController extends BaseController {
 			$all_terms = Input::get('all');
 		}
 
-		return $this->_yieldView($date, $all_terms, null);
+		return $this->_yieldView($date, $all_terms, null, null);
 	}
 
-	public function keywordTerms($keyword = null, $date = null) {
-		return $this->_yieldView($date, null, $keyword);
+	public function keywordTerms($keyword = null, $display = null, $date = null) {
+		return $this->_yieldView($date, null, $keyword, $display);
 	}
 
-	private function _yieldView($date, $all_terms, $keyword) {
+	private function _yieldView($date, $all_terms, $keyword, $display) {
 		$black_set = array();
+
+		if (!$display) {
+			$display = 'day';
+		}
 
 		if (!$date) {
 			$date = Input::get('date');
@@ -53,10 +57,23 @@ class NewsSegController extends BaseController {
 
 		$redis = \RedisL4::connection();
 		$dataNum = 1000;
-		if (isset($keyword)) {
-			$res = $redis->zRevRange("CKIP:TERMS:$keyword:$date", 0, $dataNum, 'WITHSCORES');
-		} else {
-			$res = $redis->zRevRange("CKIP:TERMS:$date", 0, $dataNum, 'WITHSCORES');
+		if ($display === 'day') {
+			if (isset($keyword)) {
+				$res = $redis->zRevRange("CKIP:TERMS:$keyword:$date", 0, $dataNum, 'WITHSCORES');
+			} else {
+				$res = $redis->zRevRange("CKIP:TERMS:$date", 0, $dataNum, 'WITHSCORES');
+			}
+		} else if ($display === 'week') {
+			if (isset($keyword)) {
+				$redis->zUnionStore('CKIP:TERMS:TEMP', 1, "CKIP:TERMS:$keyword:$date");
+				for ($i=1; $i<=6; $i++) {
+					$nowDate = date('Y-m-d', strtotime("$date - $i days"));
+					$redis->zUnionStore('CKIP:TERMS:TEMP', 2, 'CKIP:TERMS:TEMP', "CKIP:TERMS:$keyword:$nowDate");
+				}
+				$res = $redis->zRevRange("CKIP:TERMS:TEMP", 0, $dataNum, 'WITHSCORES');
+			} else {
+				$res = $redis->zRevRange("CKIP:TERMS:$date", 0, $dataNum, 'WITHSCORES');
+			}
 		}
 		if (count($res) > 0) {
 			$prevDate = date('Y-m-d', strtotime("$date - 1 days"));
@@ -66,8 +83,9 @@ class NewsSegController extends BaseController {
 				$prevRes = $redis->zRevRange("CKIP:TERMS:$prevDate", 0, $dataNum, 'WITHSCORES');
 			}
 
-			foreach ($redis->sMembers('CKIP:TERMS:BLACK_SET') as $element)
+			foreach ($redis->sMembers('CKIP:TERMS:BLACK_SET') as $element) {
 				$black_set[$element] = '';
+			}
 
 			if ($all_terms) {
 				$prevRes = $this->_changeResStruct($prevRes, $black_set);
@@ -116,7 +134,7 @@ class NewsSegController extends BaseController {
 			// no data
 		}
 
-		return View::make('pure-bootstrap3.array-to-table', array('data' => $res, 'date' => $date, 'keyword' => $keyword));
+		return View::make('pure-bootstrap3.array-to-table', array('data' => $res, 'date' => $date, 'keyword' => $keyword, 'display' => $display));
    }
 
 }

@@ -26,6 +26,7 @@
 					<li><a href="/credit-and-thanks">About</a></li>
 					<li><a href="/keyword-terms/連勝文">連勝文</a></li>
 					<li><a href="/keyword-terms/柯文哲">柯文哲</a></li>
+					<li><a href="/keyword-terms/馮光遠">馮光遠</a></li>
 				</ul>
 			</div>
 		</div>

@@ -1,6 +1,7 @@
+#!/usr/bin/env python
 #encoding=utf-8
 
-class Keyword:
+class DataHandler:
 	def getOptions(self):
 		import time
 		import getopt
@@ -10,32 +11,41 @@ class Keyword:
 		limit = 10000
 		startTime = None
 		endTime = None
-		word = None
+		keyword = None
 		term = None
+		userDict = None
 		action = 'get'
 
-		opts, args = getopt.getopt(sys.argv[1:], '', ['action=', 'limit=', 'keyword=', 'term=', 'start-time=', 'end-time=', 'source=', 'help'])
+		opts, args = getopt.getopt(sys.argv[1:], '', ['action=', 'limit=', 'keyword=', 'term=', 'start-time=', 'end-time=', 'source=', 'userdict=', 'help'])
 		for theOpt in opts:
 			if theOpt[0] == '--action':
 				action = theOpt[1]
 			elif theOpt[0] == '--limit':
 				limit = int(theOpt[1])
 			elif theOpt[0] == '--keyword':
-				word = theOpt[1]
-				word = word.decode('utf-8')
+				keyword = theOpt[1]
+				keyword = keyword.decode('utf-8')
 			elif theOpt[0] == '--term':
 				term = theOpt[1]
 			elif theOpt[0] == '--start-time':
-				startTime = time.mktime(datetime.datetime.strptime(theOpt[1], '%Y-%m-%d %H:%M:%S').timetuple())
+				theTime = theOpt[1]
+				if not ':' in theTime:
+					theTime = '%s 00:00:00' % (theTime)
+				startTime = time.mktime(datetime.datetime.strptime(theTime, '%Y-%m-%d %H:%M:%S').timetuple())
 			elif theOpt[0] == '--end-time':
-				endTime = time.mktime(datetime.datetime.strptime(theOpt[1], '%Y-%m-%d %H:%M:%S').timetuple())
+				theTime = theOpt[1]
+				if not ':' in theTime:
+					theTime = '%s 23:59:59' % (theTime)
+				endTime = time.mktime(datetime.datetime.strptime(theTime, '%Y-%m-%d %H:%M:%S').timetuple())
 			elif theOpt[0] == '--source':
 				source = theOpt[1]
+			elif theOpt[0] == '--userdict':
+				userDict = theOpt[1]
 			elif theOpt[0] == '--help':
 				self.showHelp()
 				sys.exit(0)
 
-		return action, word, term, startTime, endTime, limit
+		return action, keyword, term, startTime, endTime, limit, userDict
 
 	def showHelp(self):
 		import sys
@@ -48,7 +58,7 @@ class Keyword:
 		sys.stderr.write("--end-time='2014-07-31 23:59:59'\n")
 		sys.stderr.write("--source=1\n")
 
-	def getNews(self, word, startTime, endTime, limit):
+	def getNews(self, keyword, startTime, endTime, limit):
 		import sys
 		import datetime
 
@@ -105,7 +115,7 @@ class Keyword:
 				body = record[4]
 
 				handleDataCount += 1;
-				if (word == None) or (word != None and (word in title or word in body)):
+				if (keyword == None) or (keyword != None and (keyword in title or keyword in body)):
 					newsDateTime = datetime.datetime.fromtimestamp(time).strftime('%Y-%m-%d')
 					title = title.replace('\r', '')
 					body = body.replace('\r', '')
@@ -117,7 +127,7 @@ class Keyword:
 					break
 				lastId = newsId
 			# end for record in tmpData
-                # end while
+				# end while
 		self.cursor.close()
 		self.con.close()
 		return dataArr
@@ -125,55 +135,49 @@ class Keyword:
 	def mysqlCon(self):
 		import MySQLdb
 
-		self.con = MySQLdb.connect(host='news-ckip.source.today', user='sma', passwd='sma', db='newsdiff', charset='utf8')
+		self.con = MySQLdb.connect(host='news-ckip.source.today', user='sma', passwd='amsamsams', db='newsdiff', charset='utf8')
 		self.cursor = self.con.cursor()
 
-	def cutWord(self, articleArr):
+	def cutWord(self, articleArr, userDict):
 		import jieba
 		import itertools
+		import redis
 
-		cutResultArr = []
-		cutResult = {}
+		if userDict != None:
+			jieba.load_userdict(userDict)
+
+		r = redis.Redis(host='localhost', port=6379, charset='utf-8')
 		for article in articleArr:
 			seg_title_list = jieba.cut(article['SubjectHtml'], cut_all=False)
 			seg_body_list = jieba.cut(article['TextHtml'], cut_all=False)
 			for term in itertools.chain(seg_title_list, seg_body_list):
-				if term in cutResult:
-					cutResult[term] += 1
-				else:
-					cutResult.update({term: 1})
-			cutResultArr.append({'Published': article['Published'], 'WordCutResult': cutResult})
-		return cutResultArr
+				if len(term) >= 2:
+					if keyword == None:
+						r.zincrby('CKIP:TERMS:%s' % (article['Published']), term, 1)
+					else:
+						r.zincrby('CKIP:TERMS:%s:%s' % (keyword, article['Published']), term, 1)
 
-	def saveKeywordArticle(self, cutResultArr, word):
+	def delKeys(self, keyword, startTime, endTime):
 		import redis
-
-		r = redis.Redis(host='localhost', port=6379, charset='utf-8')
-		for cutResult in cutResultArr:
-			for theWord in cutResult['WordCutResult']:
-				if len(theWord) >= 2:
-					r.zadd('CKIP:TERMS:%s:%s' % (word, cutResult['Published']), theWord, cutResult['WordCutResult'][theWord])
-
-	def delWord(self, word, term, startTime, endTime):
-		import redis
-		import datetime
 		import time
+		import datetime
 
 		r = redis.Redis(host='localhost', port=6379, charset='utf-8')
-		theTime = startTime
-		while theTime <= endTime:
-			strTime = datetime.datetime.fromtimestamp(int(theTime)).strftime('%Y-%m-%d')
-			r.zrem('CKIP:TERMS:%s:%s' % (word, strTime), term)
-			structTime = datetime.datetime.strptime(strTime, '%Y-%m-%d')
-			structTime = structTime + datetime.timedelta(days=1)
-			theTime = time.mktime(structTime.timetuple())
+		nowTime = datetime.datetime.fromtimestamp(int(startTime))
+		endTime = datetime.datetime.fromtimestamp(int(endTime))
+		while (endTime - nowTime) >= datetime.timedelta(days=0):
+			strTime = nowTime.strftime('%Y-%m-%d')
+			if keyword == None:
+				r.delete('CKIP:TERMS:%s' % (strTime))
+			else:
+				r.delete('CKIP:TERMS:%s:%s' % (keyword, strTime))
+			nowTime = nowTime + datetime.timedelta(days=1)
 
 if __name__ == '__main__':
-	kw = Keyword()
-	action, word, term, startTime, endTime, limit = kw.getOptions()
+	dh = DataHandler()
+	action, keyword, term, startTime, endTime, limit, userDict = dh.getOptions()
 	if action == 'get':
-		dataArr = kw.getNews(word, startTime, endTime, limit)
-		cutResultArr = kw.cutWord(dataArr)
-		kw.saveKeywordArticle(cutResultArr, word)
+		dataArr = dh.getNews(keyword, startTime, endTime, limit)
+		dh.cutWord(dataArr, userDict)
 	elif action == 'delete':
-		kw.delWord(word, term, startTime, endTime)
+		dh.delKeys(keyword, startTime, endTime)
