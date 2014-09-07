@@ -21,6 +21,10 @@ table a:active  {color:#999;}
 		$next = "keyword-terms/$keyword/$display/$next";
 	}
 ?>
+<button class="btn" data-toggle="modal" data-target="#help-modal">
+	help
+</button>
+
 <div class="row">
 	<div class="col-md-12">
 		@if (isset($keyword))
@@ -104,3 +108,5 @@ table a:active  {color:#999;}
 	</div>
 </div>
 @stop
+
+@include('pure-bootstrap3.modal')
