@@ -41,6 +41,7 @@ class NewsSegController extends BaseController {
 
 	private function _yieldView($date, $all_terms, $keyword, $display) {
 		$black_set = array();
+		$pastTimeResourses = array();
 
 		if (!$display) {
 			$display = 'day';
@@ -110,7 +111,10 @@ class NewsSegController extends BaseController {
 					if (isset($pastTimeRes[$element['term']]))
 						$aveRate += $pastTimeRes[$element['term']]['rate'];
 				}
-				$aveRate /= count($pastTimeResourses);
+				$countPastTimeResources = count($pastTimeResourses);
+				if ($countPastTimeResources) {
+					$aveRate /= $countPastTimeResources;
+				}
 
 				if ($aveRate == 0) {
 					$element['heatScore'] = 'NEW';
