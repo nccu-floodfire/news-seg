@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 #encoding=utf-8
+import sys
 
 class DataHandler:
 	def getOptions(self):
 		import time
 		import getopt
 		import datetime
-		import sys
 
 		limit = 10000
 		startTime = None
@@ -14,14 +14,17 @@ class DataHandler:
 		keyword = None
 		term = None
 		userDict = None
+		self.debug = 0
 		action = 'get'
 
-		opts, args = getopt.getopt(sys.argv[1:], '', ['action=', 'limit=', 'keyword=', 'term=', 'start-time=', 'end-time=', 'source=', 'userdict=', 'help'])
+		opts, args = getopt.getopt(sys.argv[1:], '', ['action=', 'limit=', 'keyword=', 'term=', 'start-time=', 'end-time=', 'source=', 'userdict=', 'help', 'debug'])
 		for theOpt in opts:
 			if theOpt[0] == '--action':
 				action = theOpt[1]
 			elif theOpt[0] == '--limit':
 				limit = int(theOpt[1])
+			elif theOpt[0] == '--debug':
+				self.debug = 1
 			elif theOpt[0] == '--keyword':
 				keyword = theOpt[1]
 				keyword = keyword.decode('utf-8')
@@ -48,7 +51,6 @@ class DataHandler:
 		return action, keyword, term, startTime, endTime, limit, userDict
 
 	def showHelp(self):
-		import sys
 
 		sys.stderr.write("--action='get'\n")
 		sys.stderr.write("--limit=10000\n")
@@ -59,8 +61,8 @@ class DataHandler:
 		sys.stderr.write("--source=1\n")
 
 	def getNews(self, keyword, startTime, endTime, limit):
-		import sys
 		import datetime
+		import MySQLdb
 
 		self.mysqlCon()
 
@@ -82,11 +84,15 @@ class DataHandler:
 				if endTime != None:
 					sql = '%s and time <= %s' % (sql, endTime)
 				sql = '%s %s' % (sql, 'ORDER BY id DESC LIMIT 1000')
+				if self.debug:
+					sys.stderr.write("DEBUG: SQL=%s\n" % sql)
 
 				self.cursor.execute(sql)
 				tmpData =  self.cursor.fetchall()
 
 				total += len(tmpData)
+				if self.debug:
+					sys.stderr.write("DEBUG: Total=%d\n" % total)
 
 				if len(tmpData) == 0:
 					break;
@@ -147,11 +153,15 @@ class DataHandler:
 			jieba.load_userdict(userDict)
 
 		r = redis.Redis(host='localhost', port=6379, charset='utf-8')
+		total = 0
 		for article in articleArr:
 			seg_title_list = jieba.cut(article['SubjectHtml'], cut_all=False)
 			seg_body_list = jieba.cut(article['TextHtml'], cut_all=False)
 			for term in itertools.chain(seg_title_list, seg_body_list):
 				if len(term) >= 2:
+					total = total + 1
+					if self.debug and total % 1000 == 0:
+						sys.stderr.write("DEBUG: %d terms added.\n" % total)
 					if keyword == None:
 						r.zincrby('CKIP:TERMS:%s' % (article['Published']), term, 1)
 					else:
