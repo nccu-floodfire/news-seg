@@ -17,7 +17,8 @@
  * @fukuball 的 [PHP CKIP Client](https://github.com/fukuball/CKIPClient-PHP)
  * [bootstrap](http://getbootstrap.com) and [Glyphicons](http://glyphicons.com/)
  * [laravel](http://laravel.com/)
- * UniSharp 悠夏爾科技股份有限公司之技術與辦公室零食支援
+ * [jieba 斷詞](https://github.com/fxsjy/jieba)
+ * [UniSharp](http://www.unisharp.com) 技術資源
 
 ## Contributors
 
