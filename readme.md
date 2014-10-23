@@ -22,8 +22,8 @@
 
 ## Contributors
 
- * Sam, @twpaddy and @youchenlee
- * g0v Contributors
+ * [@Sam](https://github.com/SamChien), [@twpaddy](https://github.com/twpaddy) and [@youchenlee](https://github.com/youchenlee)
+ * [g0v Contributors](http://g0v.tw/)
 
 ## License
 
