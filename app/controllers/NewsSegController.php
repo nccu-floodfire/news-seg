@@ -1,8 +1,10 @@
 <?php
 
-class NewsSegController extends BaseController {
+class NewsSegController extends BaseController
+{
 
-	private function _changeResStruct($theRes, &$black_set, $use_blacklist = false) {
+	private function _changeResStruct($theRes, &$black_set, $use_blacklist = false)
+	{
 		$totalScore = 0;
 		foreach ($theRes as $element)
 			$totalScore += $element[1];
@@ -10,7 +12,7 @@ class NewsSegController extends BaseController {
 		$count = 0;
 		$newRes = array();
 		foreach ($theRes as $element) {
-			if ( !$use_blacklist ) {
+			if (!$use_blacklist) {
 				$element['term'] = $element[0];
 				$element['score'] = $element[1];
 				$element['rank'] = ++$count;
@@ -27,7 +29,8 @@ class NewsSegController extends BaseController {
 		return $newRes;
 	}
 
-	public function index($date = null, $all_terms = null) {
+	public function index($date = null, $all_terms = null)
+	{
 		if ($all_terms === null) {
 			$all_terms = Input::get('all');
 		}
@@ -35,11 +38,13 @@ class NewsSegController extends BaseController {
 		return $this->_yieldView($date, $all_terms, null, null);
 	}
 
-	public function keywordTerms($keyword = null, $display = null, $date = null) {
+	public function keywordTerms($keyword = null, $display = null, $date = null)
+	{
 		return $this->_yieldView($date, null, $keyword, $display);
 	}
 
-	private function _yieldView($date, $all_terms, $keyword, $display) {
+	private function _yieldView($date, $all_terms, $keyword, $display)
+	{
 		$black_set = array();
 		$pastTimeResourses = array();
 
@@ -67,7 +72,7 @@ class NewsSegController extends BaseController {
 		} else if ($display === 'week') {
 			if (isset($keyword)) {
 				$redis->zUnionStore('CKIP:TERMS:TEMP', 1, "CKIP:TERMS:$keyword:$date");
-				for ($i=1; $i<=6; $i++) {
+				for ($i = 1; $i <= 6; $i++) {
 					$nowDate = date('Y-m-d', strtotime("$date - $i days"));
 					$redis->zUnionStore('CKIP:TERMS:TEMP', 2, 'CKIP:TERMS:TEMP', "CKIP:TERMS:$keyword:$nowDate");
 				}
@@ -96,7 +101,7 @@ class NewsSegController extends BaseController {
 				$res = $this->_changeResStruct($res, $black_set, true);
 			}
 
-			for ($i=30; $i>=1; $i--) {
+			for ($i = 30; $i >= 1; $i--) {
 				$theDate = date('Y-m-d', strtotime("$date - $i days"));
 				$theRes = $redis->zRevRange("CKIP:TERMS:$theDate", 0, $dataNum, 'WITHSCORES');
 				if (count($theRes) != 0) {
@@ -139,6 +144,6 @@ class NewsSegController extends BaseController {
 		}
 
 		return View::make('pure-bootstrap3.array-to-table', array('data' => $res, 'date' => $date, 'keyword' => $keyword, 'display' => $display));
-   }
+	}
 
 }

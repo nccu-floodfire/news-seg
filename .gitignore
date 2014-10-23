@@ -11,4 +11,4 @@ composer.phar
 Thumbs.db
 *.sqlite
 node_modules/
-
+/.idea
