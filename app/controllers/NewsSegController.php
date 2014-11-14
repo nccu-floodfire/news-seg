@@ -159,6 +159,7 @@ class NewsSegController extends BaseController
 
 		$json = array();
 		if ($is_generate_json_report) {
+			$with_link = Input::get('with-link', false);
 			$cache_key = 'api-hotlinks-' . $date;
 			if (Cache::has($cache_key)) {
 				return Cache::get($cache_key);
@@ -181,6 +182,9 @@ class NewsSegController extends BaseController
 				return ($b['heatScore'] - $a['heatScore']);
 			});
 			foreach ($res_data as $k => $item) {
+				if (!$with_link) {
+					break;
+				}
 				$term = $item['term'];
 				$res_data[$k]['news'] = array();
 				$today = date('Y-m-d', time());
