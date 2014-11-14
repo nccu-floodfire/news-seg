@@ -4,11 +4,6 @@ use \Illuminate\Support\Facades\Cache;
 class NewsSegController extends BaseController
 {
 
-	private function searchTermsInNewsDb($term)
-	{
-
-	}
-
 	private function _changeResStruct($theRes, &$black_set, $use_blacklist = false)
 	{
 		$totalScore = 0;
@@ -48,6 +43,13 @@ class NewsSegController extends BaseController
 		}
 
 		return $this->_yieldView($date, $all_terms, null, null, $generate_json_report);
+	}
+
+	// api
+	public function hotlinks($date = null) {
+		$generate_json_report = true;
+
+		return $this->_yieldView($date, null, null, null, $generate_json_report);
 	}
 
 	public function keywordTerms($keyword = null, $display = null, $date = null)
