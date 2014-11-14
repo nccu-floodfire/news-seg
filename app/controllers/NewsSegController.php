@@ -165,7 +165,7 @@ class NewsSegController extends BaseController
 			}
 			$res_data = array();
 			foreach ($res as $item) {
-				if ($item['heatScore'] >= 4 && $item['rank'] >= 500) {
+				if ($item['heatScore'] >= 4 && $item['rank'] <= 500) {
 					unset($item[0]);
 					unset($item[1]);
 					unset($item['isHot']);
