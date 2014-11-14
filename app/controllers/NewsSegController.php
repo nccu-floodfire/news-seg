@@ -212,7 +212,9 @@ class NewsSegController extends BaseController
 
 			$json['date'] = $date;
 			$json['data'] = $res_data;
-			Cache::forever($cache_key, $json);
+			if ($with_link) {
+				Cache::forever($cache_key, $json);
+			}
 			return $json;
 		}
 
