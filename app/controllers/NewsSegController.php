@@ -175,17 +175,26 @@ class NewsSegController extends BaseController
 					unset($item[0]);
 					unset($item[1]);
 					unset($item['isHot']);
-					$item['score'] = (int)$item['score'];
+					$item['count'] = (int)$item['score'];
+
+					unset($item['score']);
+
 					if ($item['rankDiff'] == '---') {
 						$item['rankDiff'] = 0;
 					}
+					$item['rank_diff'] = $item['rankDiff'];
+					unset($item['rankDiff']);
+
+					$item['heat'] = $item['heatScore'];
+					unset($item['heatScore']);
+
 					array_push($res_data, $item);
 				}
 
 			}
 
 			usort($res_data, function($a, $b) {
-				return ($b['heatScore'] - $a['heatScore']);
+				return ($b['heat'] - $a['heat']);
 			});
 			foreach ($res_data as $k => $item) {
 				if (!$with_link) {
