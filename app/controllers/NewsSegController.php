@@ -1,4 +1,5 @@
 <?php
+use \Illuminate\Support\Facades\Cache;
 
 class NewsSegController extends BaseController
 {
@@ -155,8 +156,13 @@ class NewsSegController extends BaseController
 		}
 
 		// JSON API
+
 		$json = array();
 		if ($is_generate_json_report) {
+			$cache_key = 'api-hotlinks-' . $date;
+			if (Cache::has($cache_key)) {
+				return Cache::get($cache_key);
+			}
 			$res_data = array();
 			foreach ($res as $item) {
 				if ($item['heatScore'] >= 4 && $item['rank'] >= 500) {
@@ -202,6 +208,7 @@ class NewsSegController extends BaseController
 
 			$json['date'] = $date;
 			$json['data'] = $res_data;
+			Cache::forever($cache_key, $json);
 			return $json;
 		}
 
