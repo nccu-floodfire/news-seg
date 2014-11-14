@@ -175,6 +175,7 @@ class NewsSegController extends BaseController
 					unset($item[0]);
 					unset($item[1]);
 					unset($item['isHot']);
+					$item['score'] = (int)$item['score'];
 					if ($item['rankDiff'] == '---') {
 						$item['rankDiff'] = 0;
 					}
@@ -206,11 +207,11 @@ class NewsSegController extends BaseController
 					$d = $each_search_res->toArray();
 					$news = array(
 						'title' => $d['title'],
-						'time' => $d['time'],
+						'time' => (int) $d['time'],
 					);
 					if (array_key_exists('news', $d)) {
 						$news['url'] = $d['news']['url'];
-						$news['source'] = $d['news']['source'];
+						$news['source'] = (int) $d['news']['source'];
 					}
 					array_push($res_data[$k]['news'], $news);
 
