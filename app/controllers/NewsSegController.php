@@ -3,6 +3,11 @@
 class NewsSegController extends BaseController
 {
 
+	private function searchTermsInNewsDb($term)
+	{
+
+	}
+
 	private function _changeResStruct($theRes, &$black_set, $use_blacklist = false)
 	{
 		$totalScore = 0;
@@ -35,7 +40,13 @@ class NewsSegController extends BaseController
 			$all_terms = Input::get('all');
 		}
 
-		return $this->_yieldView($date, $all_terms, null, null);
+		// 產生每日 json file
+		$generate_json_report = Input::get('json', false);
+		if ($generate_json_report) {
+			$generate_json_report = true;
+		}
+
+		return $this->_yieldView($date, $all_terms, null, null, $generate_json_report);
 	}
 
 	public function keywordTerms($keyword = null, $display = null, $date = null)
@@ -43,7 +54,7 @@ class NewsSegController extends BaseController
 		return $this->_yieldView($date, null, $keyword, $display);
 	}
 
-	private function _yieldView($date, $all_terms, $keyword, $display)
+	private function _yieldView($date, $all_terms, $keyword, $display, $is_generate_json_report = false)
 	{
 		$black_set = array();
 		$pastTimeResourses = array();
@@ -141,6 +152,57 @@ class NewsSegController extends BaseController
 			}
 		} else {
 			// no data
+		}
+
+		// JSON API
+		$json = array();
+		if ($is_generate_json_report) {
+			$res_data = array();
+			foreach ($res as $item) {
+				if ($item['heatScore'] >= 4 && $item['rank'] >= 500) {
+					unset($item[0]);
+					unset($item[1]);
+					unset($item['isHot']);
+					if ($item['rankDiff'] == '---') {
+						$item['rankDiff'] = 0;
+					}
+					array_push($res_data, $item);
+				}
+
+			}
+
+			usort($res_data, function($a, $b) {
+				return ($b['heatScore'] - $a['heatScore']);
+			});
+			foreach ($res_data as $k => $item) {
+				$term = $item['term'];
+				$res_data[$k]['news'] = array();
+				$today = date('Y-m-d', time());
+				$start_ts = strtotime($today . ' - 1 day');
+				$end_ts = $start_ts + 86400 - 1;
+
+
+				$data = NewsInfo::with('news')->whereRaw("time between 0 and $end_ts")
+					->where('body', 'like', "%$term%")->get();
+
+				foreach ($data as $each_search_res) {
+					$d = $each_search_res->toArray();
+					$news = array(
+						'title' => $d['title'],
+						'time' => $d['time'],
+					);
+					if (array_key_exists('news', $d)) {
+						$news['url'] = $d['news']['url'];
+						$news['source'] = $d['news']['source'];
+					}
+					array_push($res_data[$k]['news'], $news);
+
+				}
+			}
+
+			$json['date'] = $date;
+			$json['data'] = $res_data;
+			return $json;
 		}
 
 		return View::make('pure-bootstrap3.array-to-table', array('data' => $res, 'date' => $date, 'keyword' => $keyword, 'display' => $display));
