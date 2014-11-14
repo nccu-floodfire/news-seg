@@ -158,11 +158,14 @@ class NewsSegController extends BaseController
 		// JSON API
 
 		$json = array();
+		$json['is_ready'] = false;
 		if ($is_generate_json_report) {
 			$with_link = Input::get('with-link', false);
 			$cache_key = 'api-hotlinks-' . $date;
 			if (Cache::has($cache_key)) {
-				return Cache::get($cache_key);
+				$json = Cache::get($cache_key);
+				$json['from_cache'] = true;
+				return $json;
 			}
 			$res_data = array();
 			foreach ($res as $item) {
@@ -192,8 +195,10 @@ class NewsSegController extends BaseController
 				$end_ts = $start_ts + 86400 - 1;
 
 
-				$data = NewsInfo::with('news')->whereRaw("time between $start_ts and $end_ts")
-					->where('body', 'like', "%$term%")->get();
+				$data = NewsInfo::with('news')
+					->whereRaw("time between $start_ts and $end_ts")
+					->where('body', 'like', "%$term%")
+					->get();
 
 				foreach ($data as $each_search_res) {
 					$d = $each_search_res->toArray();
@@ -213,6 +218,7 @@ class NewsSegController extends BaseController
 			$json['date'] = $date;
 			$json['data'] = $res_data;
 			if ($with_link) {
+				$json['is_ready'] = true;
 				Cache::forever($cache_key, $json);
 			}
 			return $json;
