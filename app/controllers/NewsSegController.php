@@ -182,7 +182,7 @@ class NewsSegController extends BaseController
 				$end_ts = $start_ts + 86400 - 1;
 
 
-				$data = NewsInfo::with('news')->whereRaw("time between 0 and $end_ts")
+				$data = NewsInfo::with('news')->whereRaw("time between $start_ts and $end_ts")
 					->where('body', 'like', "%$term%")->get();
 
 				foreach ($data as $each_search_res) {
