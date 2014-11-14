@@ -165,7 +165,7 @@ class NewsSegController extends BaseController
 			if (Cache::has($cache_key)) {
 				$json = Cache::get($cache_key);
 				$json['from_cache'] = true;
-				return $json;
+				return Response::json($json);
 			}
 			$res_data = array();
 			foreach ($res as $item) {
@@ -221,7 +221,7 @@ class NewsSegController extends BaseController
 				$json['is_ready'] = true;
 				Cache::forever($cache_key, $json);
 			}
-			return $json;
+			return Response::json($json);
 		}
 
 		return View::make('pure-bootstrap3.array-to-table', array('data' => $res, 'date' => $date, 'keyword' => $keyword, 'display' => $display));
