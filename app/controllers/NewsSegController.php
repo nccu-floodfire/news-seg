@@ -52,6 +52,15 @@ class NewsSegController extends BaseController
 		return $this->_yieldView($date, null, null, null, $generate_json_report);
 	}
 
+	public function clearcache($date = null) {
+		if ($date === null) {
+			$date = date('Y-m-d', time());
+		}
+		$cache_key = 'api-hotlinks-' . $date;
+		$res = Cache::pull($cache_key);
+		return $res;
+	}
+
 	public function keywordTerms($keyword = null, $display = null, $date = null)
 	{
 		return $this->_yieldView($date, null, $keyword, $display);

@@ -24,8 +24,12 @@ Route::get('/credit-and-thanks', function() {
 	return View::make('pure-bootstrap3.credit-and-thanks');
 });
 
+
+Route::get('/api/news/v1/hot/{date}', array( 'as' => 'api.news.hotlinks', 'uses' =>'NewsSegController@hotlinks'));
+Route::get('/api/news/v1/clearcache/{date}', array( 'as' => 'api.news.clearcache', 'uses' =>'NewsSegController@clearcache'));
+
 Route::get('/', array( 'as' => 'home', 'uses' =>'NewsSegController@index'));
-Route::get('/api/news/v1/hot/{date}', array( 'as' => 'home.hotlinks', 'uses' =>'NewsSegController@hotlinks'));
+
 Route::get('/news-terms/{date}', array( 'as' => 'home', 'uses' =>'NewsSegController@index'));
 Route::get('/keyword-terms/{keyword}', array( 'as' => 'home', 'uses' =>'NewsSegController@keywordTerms'));
 Route::get('/keyword-terms/{keyword}/{display}', array( 'as' => 'home', 'uses' =>'NewsSegController@keywordTerms'));
