@@ -52,6 +52,12 @@ class NewsSegController extends BaseController
 		return $this->_yieldView($date, null, null, null, $generate_json_report);
 	}
 
+	public function apiAllTerms($date)
+	{
+		$generate_json_report = true;
+		return $this->_yieldView($date, null, null, null, $generate_json_report, 0);
+	}
+
 	public function clearcache($date = null) {
 		if ($date === null) {
 			$date = date('Y-m-d', time());
@@ -66,7 +72,7 @@ class NewsSegController extends BaseController
 		return $this->_yieldView($date, null, $keyword, $display);
 	}
 
-	private function _yieldView($date, $all_terms, $keyword, $display, $is_generate_json_report = false)
+	private function _yieldView($date, $all_terms, $keyword, $display, $is_generate_json_report = false, $heat_score_limitation = 4)
 	{
 		$black_set = array();
 		$pastTimeResourses = array();
@@ -170,10 +176,14 @@ class NewsSegController extends BaseController
 
 		$json = array();
 		$json['is_ready'] = false;
+		$use_cache = true;
+		if ($is_generate_json_report && $heat_score_limitation === 0) {
+			$use_cache = false;
+		}
 		if ($is_generate_json_report) {
 			$with_link = Input::get('with-link', false);
 			$cache_key = 'api-hotlinks-' . $date;
-			if (Cache::has($cache_key)) {
+			if (Cache::has($cache_key) && $use_cache) {
 				$json = Cache::get($cache_key);
 				$json['from_cache'] = true;
 				return Response::json($json);
@@ -183,7 +193,7 @@ class NewsSegController extends BaseController
 				if ($item['heatScore'] == 'NEW') {
 					$item['heatScore'] = 999;
 				}
-				if ($item['heatScore'] >= 4 && $item['rank'] <= 200) {
+				if ($item['heatScore'] >= $heat_score_limitation && $item['rank'] <= 200) {
 					unset($item[0]);
 					unset($item[1]);
 					unset($item['isHot']);
@@ -241,7 +251,7 @@ class NewsSegController extends BaseController
 
 			$json['date'] = $date;
 			$json['data'] = $res_data;
-			if ($with_link) {
+			if ($with_link && $use_cache) {
 				$json['is_ready'] = true;
 				Cache::forever($cache_key, $json);
 			}

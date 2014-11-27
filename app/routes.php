@@ -28,6 +28,8 @@ Route::get('/credit-and-thanks', function() {
 Route::get('/api/news/v1/hot/{date}', array( 'as' => 'api.news.hotlinks', 'uses' =>'NewsSegController@hotlinks'));
 Route::get('/api/news/v1/clearcache/{date}', array( 'as' => 'api.news.clearcache', 'uses' =>'NewsSegController@clearcache'));
 
+Route::get('/api/news/v1/all/{date}', 'NewsSegController@apiAllTerms');
+
 Route::get('/', array( 'as' => 'home', 'uses' =>'NewsSegController@index'));
 
 Route::get('/news-terms/{date}', array( 'as' => 'home', 'uses' =>'NewsSegController@index'));
