@@ -7,8 +7,17 @@ class NewsSegController extends BaseController
 	private function _changeResStruct($theRes, &$black_set, $use_blacklist = false)
 	{
 		$totalScore = 0;
-		foreach ($theRes as $element)
-			$totalScore += $element[1];
+		if ($use_blacklist) {
+			foreach ($theRes as $element) {
+				if (!isset($black_set[$element[0]]) && !is_numeric($element[0])) {
+					$totalScore += $element[1];
+				}
+			}
+		} else {
+			foreach ($theRes as $element) {
+				$totalScore += $element[1];
+			}
+		}
 
 		$count = 0;
 		$newRes = array();
