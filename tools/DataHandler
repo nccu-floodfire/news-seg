@@ -3,6 +3,7 @@
 import sys
 
 class DataHandler:
+	DbConfig = {}
 	def getOptions(self):
 		import time
 		import getopt
@@ -14,10 +15,13 @@ class DataHandler:
 		keyword = None
 		term = None
 		userDict = None
+		self.DbConfig['dbname'] = 'newsdiff'
+		self.DbConfig['dbuser'] = 'sma'
+		self.DbConfig['dbpassword'] = 'amsamsams'
 		self.debug = 0
 		action = 'get'
 
-		opts, args = getopt.getopt(sys.argv[1:], '', ['action=', 'limit=', 'keyword=', 'term=', 'start-time=', 'end-time=', 'source=', 'userdict=', 'help', 'debug'])
+		opts, args = getopt.getopt(sys.argv[1:], '', ['action=', 'limit=', 'keyword=', 'term=', 'start-time=', 'end-time=', 'source=', 'userdict=', 'dbname=', 'dbuser=', 'dbpassword=', 'help', 'debug'])
 		for theOpt in opts:
 			if theOpt[0] == '--action':
 				action = theOpt[1]
@@ -30,6 +34,12 @@ class DataHandler:
 				keyword = keyword.decode('utf-8')
 			elif theOpt[0] == '--term':
 				term = theOpt[1]
+			elif theOpt[0] == '--dbname':
+				self.DbConfig['dbname'] = theOpt[1]
+			elif theOpt[0] == '--dbuser':
+				self.DbConfig['dbuser'] = theOpt[1]
+			elif theOpt[0] == '--dbpassword':
+				self.DbConfig['dbpassword'] = theOpt[1]
 			elif theOpt[0] == '--start-time':
 				theTime = theOpt[1]
 				if not ':' in theTime:
@@ -141,7 +151,7 @@ class DataHandler:
 	def mysqlCon(self):
 		import MySQLdb
 
-		self.con = MySQLdb.connect(host='news-ckip.source.today', user='sma', passwd='amsamsams', db='newsdiff', charset='utf8')
+		self.con = MySQLdb.connect(host='127.0.0.1', user=self.DbConfig['dbuser'], passwd=self.DbConfig['dbpassword'], db=self.DbConfig['dbname'], charset='utf8')
 		self.cursor = self.con.cursor()
 
 	def cutWord(self, articleArr, userDict):
