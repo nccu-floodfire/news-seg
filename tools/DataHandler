@@ -3,201 +3,201 @@
 import sys
 
 class DataHandler:
-	DbConfig = {}
-	def getOptions(self):
-		import time
-		import getopt
-		import datetime
+    DbConfig = {}
+    def getOptions(self):
+        import time
+        import getopt
+        import datetime
 
-		limit = 10000
-		startTime = None
-		endTime = None
-		keyword = None
-		term = None
-		userDict = None
-		self.DbConfig['dbname'] = 'newsdiff'
-		self.DbConfig['dbuser'] = 'sma'
-		self.DbConfig['dbpassword'] = 'amsamsams'
-		self.debug = 0
-		action = 'get'
+        limit = 10000
+        startTime = None
+        endTime = None
+        keyword = None
+        term = None
+        userDict = None
+        self.DbConfig['dbname'] = 'newsdiff'
+        self.DbConfig['dbuser'] = 'sma'
+        self.DbConfig['dbpassword'] = 'amsamsams'
+        self.debug = 0
+        action = 'get'
 
-		opts, args = getopt.getopt(sys.argv[1:], '', ['action=', 'limit=', 'keyword=', 'term=', 'start-time=', 'end-time=', 'source=', 'userdict=', 'dbname=', 'dbuser=', 'dbpassword=', 'help', 'debug'])
-		for theOpt in opts:
-			if theOpt[0] == '--action':
-				action = theOpt[1]
-			elif theOpt[0] == '--limit':
-				limit = int(theOpt[1])
-			elif theOpt[0] == '--debug':
-				self.debug = 1
-			elif theOpt[0] == '--keyword':
-				keyword = theOpt[1]
-				keyword = keyword.decode('utf-8')
-			elif theOpt[0] == '--term':
-				term = theOpt[1]
-			elif theOpt[0] == '--dbname':
-				self.DbConfig['dbname'] = theOpt[1]
-			elif theOpt[0] == '--dbuser':
-				self.DbConfig['dbuser'] = theOpt[1]
-			elif theOpt[0] == '--dbpassword':
-				self.DbConfig['dbpassword'] = theOpt[1]
-			elif theOpt[0] == '--start-time':
-				theTime = theOpt[1]
-				if not ':' in theTime:
-					theTime = '%s 00:00:00' % (theTime)
-				startTime = time.mktime(datetime.datetime.strptime(theTime, '%Y-%m-%d %H:%M:%S').timetuple())
-			elif theOpt[0] == '--end-time':
-				theTime = theOpt[1]
-				if not ':' in theTime:
-					theTime = '%s 23:59:59' % (theTime)
-				endTime = time.mktime(datetime.datetime.strptime(theTime, '%Y-%m-%d %H:%M:%S').timetuple())
-			elif theOpt[0] == '--source':
-				source = theOpt[1]
-			elif theOpt[0] == '--userdict':
-				userDict = theOpt[1]
-			elif theOpt[0] == '--help':
-				self.showHelp()
-				sys.exit(0)
+        opts, args = getopt.getopt(sys.argv[1:], '', ['action=', 'limit=', 'keyword=', 'term=', 'start-time=', 'end-time=', 'source=', 'userdict=', 'dbname=', 'dbuser=', 'dbpassword=', 'help', 'debug'])
+        for theOpt in opts:
+            if theOpt[0] == '--action':
+                action = theOpt[1]
+            elif theOpt[0] == '--limit':
+                limit = int(theOpt[1])
+            elif theOpt[0] == '--debug':
+                self.debug = 1
+            elif theOpt[0] == '--keyword':
+                keyword = theOpt[1]
+                keyword = keyword.decode('utf-8')
+            elif theOpt[0] == '--term':
+                term = theOpt[1]
+            elif theOpt[0] == '--dbname':
+                self.DbConfig['dbname'] = theOpt[1]
+            elif theOpt[0] == '--dbuser':
+                self.DbConfig['dbuser'] = theOpt[1]
+            elif theOpt[0] == '--dbpassword':
+                self.DbConfig['dbpassword'] = theOpt[1]
+            elif theOpt[0] == '--start-time':
+                theTime = theOpt[1]
+                if not ':' in theTime:
+                    theTime = '%s 00:00:00' % (theTime)
+                startTime = time.mktime(datetime.datetime.strptime(theTime, '%Y-%m-%d %H:%M:%S').timetuple())
+            elif theOpt[0] == '--end-time':
+                theTime = theOpt[1]
+                if not ':' in theTime:
+                    theTime = '%s 23:59:59' % (theTime)
+                endTime = time.mktime(datetime.datetime.strptime(theTime, '%Y-%m-%d %H:%M:%S').timetuple())
+            elif theOpt[0] == '--source':
+                source = theOpt[1]
+            elif theOpt[0] == '--userdict':
+                userDict = theOpt[1]
+            elif theOpt[0] == '--help':
+                self.showHelp()
+                sys.exit(0)
 
-		return action, keyword, term, startTime, endTime, limit, userDict
+        return action, keyword, term, startTime, endTime, limit, userDict
 
-	def showHelp(self):
+    def showHelp(self):
 
-		sys.stderr.write("--action='get'\n")
-		sys.stderr.write("--limit=10000\n")
-		sys.stderr.write("--keyword='歐巴馬'\n")
-		sys.stderr.write("--term='選舉'\n")
-		sys.stderr.write("--start-time='2014-06-01 00:00:00'\n")
-		sys.stderr.write("--end-time='2014-07-31 23:59:59'\n")
-		sys.stderr.write("--source=1\n")
+        sys.stderr.write("--action='get'\n")
+        sys.stderr.write("--limit=10000\n")
+        sys.stderr.write("--keyword='歐巴馬'\n")
+        sys.stderr.write("--term='選舉'\n")
+        sys.stderr.write("--start-time='2014-06-01 00:00:00'\n")
+        sys.stderr.write("--end-time='2014-07-31 23:59:59'\n")
+        sys.stderr.write("--source=1\n")
 
-	def getNews(self, keyword, startTime, endTime, limit):
-		import datetime
-		import MySQLdb
+    def getNews(self, keyword, startTime, endTime, limit):
+        import datetime
+        import MySQLdb
 
-		self.mysqlCon()
+        self.mysqlCon()
 
-		dataArr = []
-		lastId = -1
-		isOver = False
-		tmpData = []
-		total = 0
-		handleDataCount = 0
+        dataArr = []
+        lastId = -1
+        isOver = False
+        tmpData = []
+        total = 0
+        handleDataCount = 0
 
-		sys.stderr.write('Looping for 0/%d\n' % limit)
-		while not isOver:
-			try:
-				sql = 'SELECT id, url, time, title, body FROM news LEFT JOIN news_info ON id=news_id WHERE last_fetch_at!=0'
-				if lastId != -1:
-					sql = '%s and id < %d' % (sql, lastId)
-				if startTime != None:
-					sql = '%s and time >= %s' % (sql, startTime)
-				if endTime != None:
-					sql = '%s and time <= %s' % (sql, endTime)
-				sql = '%s %s' % (sql, 'ORDER BY id DESC LIMIT 1000')
-				if self.debug:
-					sys.stderr.write("DEBUG: SQL=%s\n" % sql)
+        sys.stderr.write('Looping for 0/%d\n' % limit)
+        while not isOver:
+            try:
+                sql = 'SELECT id, url, time, title, body FROM news LEFT JOIN news_info ON id=news_id WHERE last_fetch_at!=0'
+                if lastId != -1:
+                    sql = '%s and id < %d' % (sql, lastId)
+                if startTime != None:
+                    sql = '%s and time >= %s' % (sql, startTime)
+                if endTime != None:
+                    sql = '%s and time <= %s' % (sql, endTime)
+                sql = '%s %s' % (sql, 'ORDER BY id DESC LIMIT 1000')
+                if self.debug:
+                    sys.stderr.write("DEBUG: SQL=%s\n" % sql)
 
-				self.cursor.execute(sql)
-				tmpData =  self.cursor.fetchall()
+                self.cursor.execute(sql)
+                tmpData =  self.cursor.fetchall()
 
-				total += len(tmpData)
-				if self.debug:
-					sys.stderr.write("DEBUG: Total=%d\n" % total)
+                total += len(tmpData)
+                if self.debug:
+                    sys.stderr.write("DEBUG: Total=%d\n" % total)
 
-				if len(tmpData) == 0:
-					break;
+                if len(tmpData) == 0:
+                    break;
 
-				sys.stderr.write('Looping for %d/%d\n' % (total, limit))
-			except MySQLdb.OperationalError, e:
-				sys.stderr.write('Error: %s\n' % e)
+                sys.stderr.write('Looping for %d/%d\n' % (total, limit))
+            except MySQLdb.OperationalError, e:
+                sys.stderr.write('Error: %s\n' % e)
 
-				retryCount = 0
-				while True:
-					try:
-						mysqlCon()
-						break
-					except MySQLdb.OperationalError, e:
-						sys.stderr.write('Error: %s\n' % e)
-						retryCount += 1
-						if retryCount == 3:
-							sys.exit(1)
-				continue
+                retryCount = 0
+                while True:
+                    try:
+                        mysqlCon()
+                        break
+                    except MySQLdb.OperationalError, e:
+                        sys.stderr.write('Error: %s\n' % e)
+                        retryCount += 1
+                        if retryCount == 3:
+                            sys.exit(1)
+                continue
 
-			for record in tmpData:
-				newsId = record[0]
-				url = record[1]
-				time = record[2]
-				title = record[3]
-				body = record[4]
+            for record in tmpData:
+                newsId = record[0]
+                url = record[1]
+                time = record[2]
+                title = record[3]
+                body = record[4]
 
-				handleDataCount += 1;
-				if (keyword == None) or (keyword != None and (keyword in title or keyword in body)):
-					newsDateTime = datetime.datetime.fromtimestamp(time).strftime('%Y-%m-%d')
-					title = title.replace('\r', '')
-					body = body.replace('\r', '')
-					dataDict = {'Published': newsDateTime, 'SubjectHtml': title, 'TextHtml': body}
-					dataArr.append(dataDict)
+                handleDataCount += 1;
+                if (keyword == None) or (keyword != None and (keyword in title or keyword in body)):
+                    newsDateTime = datetime.datetime.fromtimestamp(time).strftime('%Y-%m-%d')
+                    title = title.replace('\r', '')
+                    body = body.replace('\r', '')
+                    dataDict = {'Published': newsDateTime, 'SubjectHtml': title, 'TextHtml': body}
+                    dataArr.append(dataDict)
 
-				if handleDataCount >= limit:
-					isOver = True
-					break
-				lastId = newsId
-			# end for record in tmpData
-				# end while
-		self.cursor.close()
-		self.con.close()
-		return dataArr
+                if handleDataCount >= limit:
+                    isOver = True
+                    break
+                lastId = newsId
+            # end for record in tmpData
+                # end while
+        self.cursor.close()
+        self.con.close()
+        return dataArr
 
-	def mysqlCon(self):
-		import MySQLdb
+    def mysqlCon(self):
+        import MySQLdb
 
-		self.con = MySQLdb.connect(host='127.0.0.1', user=self.DbConfig['dbuser'], passwd=self.DbConfig['dbpassword'], db=self.DbConfig['dbname'], charset='utf8')
-		self.cursor = self.con.cursor()
+        self.con = MySQLdb.connect(host='127.0.0.1', user=self.DbConfig['dbuser'], passwd=self.DbConfig['dbpassword'], db=self.DbConfig['dbname'], charset='utf8')
+        self.cursor = self.con.cursor()
 
-	def cutWord(self, articleArr, userDict):
-		import jieba
-		import itertools
-		import redis
+    def cutWord(self, articleArr, userDict):
+        import jieba
+        import itertools
+        import redis
 
-		if userDict != None:
-			jieba.load_userdict(userDict)
+        if userDict != None:
+            jieba.load_userdict(userDict)
 
-		r = redis.Redis(host='localhost', port=6379, charset='utf-8')
-		total = 0
-		for article in articleArr:
-			seg_title_list = jieba.cut(article['SubjectHtml'], cut_all=False)
-			seg_body_list = jieba.cut(article['TextHtml'], cut_all=False)
-			for term in itertools.chain(seg_title_list, seg_body_list):
-				if len(term) >= 2:
-					total = total + 1
-					if self.debug and total % 1000 == 0:
-						sys.stderr.write("DEBUG: %d terms added.\n" % total)
-					if keyword == None:
-						r.zincrby('CKIP:TERMS:%s' % (article['Published']), term, 1)
-					else:
-						r.zincrby('CKIP:TERMS:%s:%s' % (keyword, article['Published']), term, 1)
+        r = redis.Redis(host='localhost', port=6379, charset='utf-8')
+        total = 0
+        for article in articleArr:
+            seg_title_list = jieba.cut(article['SubjectHtml'], cut_all=False)
+            seg_body_list = jieba.cut(article['TextHtml'], cut_all=False)
+            for term in itertools.chain(seg_title_list, seg_body_list):
+                if len(term) >= 2:
+                    total = total + 1
+                    if self.debug and total % 1000 == 0:
+                        sys.stderr.write("DEBUG: %d terms added.\n" % total)
+                    if keyword == None:
+                        r.zincrby('CKIP:TERMS:%s' % (article['Published']), term, 1)
+                    else:
+                        r.zincrby('CKIP:TERMS:%s:%s' % (keyword, article['Published']), term, 1)
 
-	def delKeys(self, keyword, startTime, endTime):
-		import redis
-		import time
-		import datetime
+    def delKeys(self, keyword, startTime, endTime):
+        import redis
+        import time
+        import datetime
 
-		r = redis.Redis(host='localhost', port=6379, charset='utf-8')
-		nowTime = datetime.datetime.fromtimestamp(int(startTime))
-		endTime = datetime.datetime.fromtimestamp(int(endTime))
-		while (endTime - nowTime) >= datetime.timedelta(days=0):
-			strTime = nowTime.strftime('%Y-%m-%d')
-			if keyword == None:
-				r.delete('CKIP:TERMS:%s' % (strTime))
-			else:
-				r.delete('CKIP:TERMS:%s:%s' % (keyword, strTime))
-			nowTime = nowTime + datetime.timedelta(days=1)
+        r = redis.Redis(host='localhost', port=6379, charset='utf-8')
+        nowTime = datetime.datetime.fromtimestamp(int(startTime))
+        endTime = datetime.datetime.fromtimestamp(int(endTime))
+        while (endTime - nowTime) >= datetime.timedelta(days=0):
+            strTime = nowTime.strftime('%Y-%m-%d')
+            if keyword == None:
+                r.delete('CKIP:TERMS:%s' % (strTime))
+            else:
+                r.delete('CKIP:TERMS:%s:%s' % (keyword, strTime))
+            nowTime = nowTime + datetime.timedelta(days=1)
 
 if __name__ == '__main__':
-	dh = DataHandler()
-	action, keyword, term, startTime, endTime, limit, userDict = dh.getOptions()
-	if action == 'get':
-		dataArr = dh.getNews(keyword, startTime, endTime, limit)
-		dh.cutWord(dataArr, userDict)
-	elif action == 'delete':
-		dh.delKeys(keyword, startTime, endTime)
+    dh = DataHandler()
+    action, keyword, term, startTime, endTime, limit, userDict = dh.getOptions()
+    if action == 'get':
+        dataArr = dh.getNews(keyword, startTime, endTime, limit)
+        dh.cutWord(dataArr, userDict)
+    elif action == 'delete':
+        dh.delKeys(keyword, startTime, endTime)
