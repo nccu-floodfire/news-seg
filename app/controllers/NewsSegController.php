@@ -191,7 +191,7 @@ class NewsSegController extends BaseController
 		}
 		if ($is_generate_json_report) {
 			$with_link = Input::get('with-link', false);
-			$cache_key = 'api-hotlinks-' . $date;
+			$cache_key = 'api-alllinks-' . $date;
 			if (Cache::has($cache_key) && $use_cache) {
 				$json = Cache::get($cache_key);
 				$json['from_cache'] = true;
@@ -233,8 +233,7 @@ class NewsSegController extends BaseController
 				}
 				$term = $item['term'];
 				$res_data[$k]['news'] = array();
-				$today = date('Y-m-d', time());
-				$start_ts = strtotime($today . ' - 1 day');
+				$start_ts = strtotime($date . ' - 1 day');
 				$end_ts = $start_ts + 86400 - 1;
 
 
