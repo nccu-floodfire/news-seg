@@ -71,7 +71,7 @@ class NewsSegController extends BaseController
 		if ($date === null) {
 			$date = date('Y-m-d', time());
 		}
-		$cache_key = 'api-alllinks-' . $date;
+		$cache_key = 'api-hotlinks-' . $date;
 		$res = Cache::pull($cache_key);
 		return $res;
 	}
@@ -185,13 +185,13 @@ class NewsSegController extends BaseController
 
 		$json = array();
 		$json['is_ready'] = false;
-		$use_cache = false;
+		$use_cache = true;
 		if ($is_generate_json_report && $heat_score_limitation === 0) {
-			$use_cache = true;
+			$use_cache = false;
 		}
 		if ($is_generate_json_report) {
 			$with_link = Input::get('with-link', false);
-			$cache_key = 'api-alllinks-' . $date;
+			$cache_key = 'api-hotlinks-' . $date;
 			if (Cache::has($cache_key) && $use_cache) {
 				$json = Cache::get($cache_key);
 				$json['from_cache'] = true;
