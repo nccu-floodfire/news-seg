@@ -186,7 +186,7 @@ class NewsSegController extends BaseController
 		$json = array();
 		$json['is_ready'] = false;
 		$use_cache = false;
-		if ($is_generate_json_report && $heat_score_limitation !== 0) {
+		if ($is_generate_json_report && $heat_score_limitation === 0) {
 			$use_cache = true;
 		}
 		if ($is_generate_json_report) {
