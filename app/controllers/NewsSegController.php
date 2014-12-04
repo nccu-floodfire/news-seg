@@ -240,7 +240,7 @@ class NewsSegController extends BaseController
 
 				$data = NewsInfo::with('news')
 					->whereRaw("time between $start_ts and $end_ts")
-					->where('body', 'like', "%$term%")
+					->where('title', 'like', "%$term%") // fulltext search on title only, to improve performance.
 					->get();
 
 				foreach ($data as $each_search_res) {
@@ -252,6 +252,8 @@ class NewsSegController extends BaseController
 					if (array_key_exists('news', $d)) {
 						$news['url'] = $d['news']['url'];
 						$news['source'] = (int) $d['news']['source'];
+						$news['share_count'] = $d['news']['share_count'];
+						$news['comment_count'] = $d['news']['comment_count'];
 					}
 					array_push($res_data[$k]['news'], $news);
 
