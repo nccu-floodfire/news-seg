@@ -185,9 +185,9 @@ class NewsSegController extends BaseController
 
 		$json = array();
 		$json['is_ready'] = false;
-		$use_cache = true;
-		if ($is_generate_json_report && $heat_score_limitation === 0) {
-			$use_cache = false;
+		$use_cache = false;
+		if ($is_generate_json_report && $heat_score_limitation !== 0) {
+			$use_cache = true;
 		}
 		if ($is_generate_json_report) {
 			$with_link = Input::get('with-link', false);
@@ -200,7 +200,7 @@ class NewsSegController extends BaseController
 			$res_data = array();
 			foreach ($res as $item) {
 				if ($item['heatScore'] == 'NEW') {
-					$item['heatScore'] = 999;
+					$item['heatScore'] = 300;
 				}
 				if ($item['heatScore'] >= $heat_score_limitation && $item['rank'] <= 200) {
 					unset($item[0]);
