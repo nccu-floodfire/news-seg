@@ -69,6 +69,9 @@ class DataHandler:
         sys.stderr.write("--start-time='2014-06-01 00:00:00'\n")
         sys.stderr.write("--end-time='2014-07-31 23:59:59'\n")
         sys.stderr.write("--source=1\n")
+        sys.stderr.write("--dbname=name (default newsdiff)\n")
+        sys.stderr.write("--dbuser=user\n")
+        sys.stderr.write("--dbpassword=password\n")
 
     def getNews(self, keyword, startTime, endTime, limit):
         import datetime
