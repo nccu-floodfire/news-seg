@@ -71,7 +71,7 @@ class NewsSegController extends BaseController
 		if ($date === null) {
 			$date = date('Y-m-d', time());
 		}
-		$cache_key = 'api-hotlinks-' . $date;
+		$cache_key = 'api-alllinks-' . $date;
 		$res = Cache::pull($cache_key);
 		return $res;
 	}
@@ -239,7 +239,7 @@ class NewsSegController extends BaseController
 
 				$data = NewsInfo::with('news')
 					->whereRaw("time between $start_ts and $end_ts")
-					->where('title', 'like', "%$term%") // fulltext search on title only, to improve performance.
+					->where('body', 'like', "%$term%")
 					->get();
 
 				foreach ($data as $each_search_res) {
