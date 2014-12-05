@@ -20,13 +20,15 @@
 		<div class="container">
 			<div class="row">
 				<div class="navbar-header">
-					<a href="/" class="navbar-brand">NewsSeg</a>
+					<a href="/" class="navbar-brand">NewsSeg @ NCCU</a>
 				</div>
 				<ul class="nav navbar-nav">
 					<li><a href="/credit-and-thanks">About</a></li>
+					<!--
 					<li><a href="/keyword-terms/連勝文">連勝文</a></li>
 					<li><a href="/keyword-terms/柯文哲">柯文哲</a></li>
 					<li><a href="/keyword-terms/馮光遠">馮光遠</a></li>
+					-->
 				</ul>
 			</div>
 		</div>
