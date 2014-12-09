@@ -45,10 +45,11 @@ table a:active  {color:#999;}
 		<table class="table">
 			<tr>
 				<th>#</th>
-				<th>Rank Change</th>
-				<th>Term</th>
-				<th>Count</th>
-				<th>Score</th>
+				<th>+/-</th>
+				<th>關鍵詞</th>
+				<th>詞頻</th>
+				<th>出現率</th>
+				<th>熱度</th>
 			</tr>
 			@foreach ($data as $key => $val)
 			<?php
@@ -88,15 +89,17 @@ table a:active  {color:#999;}
 				<td>{{ $image }} {{{ $rankDiff }}}</td>
 				<td><a href='https://www.google.com.tw/search?hl=zh-TW&gl=tw&tbm=nws&q={{{ $val['term'] }}}' target="_blank"><span class="glyphicon glyphicon-share-alt"></span></a> {{{ $val['term'] }}}</td>
 				<td>{{{ $val['score'] }}}</td>
+				<td>{{{ number_format($val['rate'] * 100, 2)}}}%</td>
 				<td>{{{ $val['heatScore'] }}}</td>
 			</tr>
 			@endforeach
 			<tr>
 				<th>#</th>
-				<th>Rank Change</th>
-				<th>Term</th>
-				<th>Count</th>
-				<th>Score</th>
+				<th>+/-</th>
+				<th>關鍵詞</th>
+				<th>詞頻</th>
+				<th>出現率</th>
+				<th>熱度</th>
 			</tr>
 		</table>
 		@else
