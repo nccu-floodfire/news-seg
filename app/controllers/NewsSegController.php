@@ -233,7 +233,7 @@ class NewsSegController extends BaseController
 				}
 				$term = $item['term'];
 				$res_data[$k]['news'] = array();
-				$start_ts = strtotime($date . ' - 1 day');
+				$start_ts = strtotime($date);
 				$end_ts = $start_ts + 86400 - 1;
 
 
