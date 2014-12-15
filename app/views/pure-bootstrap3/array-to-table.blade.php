@@ -53,10 +53,22 @@ table a:active  {color:#999;}
 		//$data_heat = array_map(function ($ar) {return $ar['heatScore'];}, $data);
 		?>
 		<h4>Standard deviation of 出現率: <b>{{{ $sd_rate }}}</b></h4>
-		<div style="line-height: 160%;">
+		<div style="line-height: 200%;">
 		@foreach ($data as $key => $val)
-		@if ($val['heatScore'] >= 4 && $val['rank'] <= 300)
-		<span class="label label-danger">{{{$val['term']}}}</span>
+		<?php
+		$heat = $val['heatScore'];
+		$gb = 38;
+		$red = 205;
+		if ($heat == 'NEW') {
+			$gb = 0;
+		} else {
+			$gb = 205 - (205 / 96 * $heat * $val['rate'] * 10000 / 5);
+		}
+		$gb = number_format($gb);
+		if ($gb < 0) $gb = 0;
+		?>
+		@if (( $val['heatScore'] >= 4 || $val['heatScore'] == 'NEW') && $val['rank'] <= 300)
+		<span class="label" style="background-color: rgb({{{$red}}},{{{$gb}}},{{{$gb}}});">{{{$val['term']}}}</span>
 		@endif
 		@endforeach
 		</div>
