@@ -58,10 +58,9 @@ table a:active  {color:#999;}
 		<?php
 		$heat = $val['heatScore'];
 		$gb = 38;
-		$red = 205;
+		$r = 205;
 		if ($heat == 'NEW') {
 			$gb = 0;
-			$red = 100;
 		} else {
 			$gb = 205 - (205 / 96 * $heat * $val['rate'] * 10000 / 5);
 		}
@@ -73,15 +72,20 @@ table a:active  {color:#999;}
 			$g = 0;
 		}
 		if ($b > 204) {
-			$red = $red - ($b - 204);
+			$r = $r - ($b - 204);
 			$b = 204;
-			if ($red < 100) {
-				$red = 100;
+			if ($r < 100) {
+				$r = 100;
 			}
 		}
+		if ($heat == 'NEW') {
+			$r = 100;
+			$g = 0;
+			$b = 204;
+        }
 		?>
 		@if (( $val['heatScore'] >= 4 || $val['heatScore'] == 'NEW') && $val['rank'] <= 300)
-		<span class="label" style="background-color: rgb({{{$red}}},{{{$g}}},{{{$b}}});">{{{$val['term']}}}</span>
+		<span class="label" style="background-color: rgb({{{$r}}},{{{$g}}},{{{$b}}});">{{{$val['term']}}}</span>
 		@endif
 		@endforeach
 		</div>
