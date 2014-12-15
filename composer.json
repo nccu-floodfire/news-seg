@@ -30,7 +30,10 @@
 		],
 		"psr-4": {
 			"Us\\": "app/lib"
-		}
+		},
+		"files": [
+			"app/helpers.php"
+		]
 	},
 	"scripts": {
 		"post-install-cmd": [
