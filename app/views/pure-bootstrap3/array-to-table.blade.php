@@ -46,10 +46,10 @@ table a:active  {color:#999;}
 		//$data_heat = array_map(function ($ar) {return $ar['heatScore'];}, $data);
 		?>
 		<h4>Standard deviation of 出現率: {{{ @sd($data_rate) }}}</h4>
-		<div>
+		<div style="line-height: 160%;">
 		@foreach ($data as $key => $val)
 		@if ($val['heatScore'] >= 4 && $val['rank'] <= 200)
-		<span class="label label-default">{{{$val['term']}}}</span>
+		<span class="label label-danger">{{{$val['term']}}}</span>
 		@endif
 		@endforeach
 		</div>
