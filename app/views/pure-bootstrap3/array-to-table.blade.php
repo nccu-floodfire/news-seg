@@ -42,10 +42,16 @@ table a:active  {color:#999;}
 			<a href="/{{{$next}}}"><span class="glyphicon glyphicon-chevron-right"></span> next </a>
 		</h3>
 		<?php
-		$data_rate = array_map(function ($ar) {return $ar['rate']*100;}, $data);
+		if (count($data) > 200) {
+			$data_rate = array_map(function ($ar) {return $ar['rate']*100;}, $data);
+			$sd_rate = sd($data_rate);
+		} else {
+			$sd_rate = 'N/A';
+		}
+
 		//$data_heat = array_map(function ($ar) {return $ar['heatScore'];}, $data);
 		?>
-		<h4>Standard deviation of 出現率: {{{ @sd($data_rate) }}}</h4>
+		<h4>Standard deviation of 出現率: {{{ $sd_rate }}}</h4>
 		<div style="line-height: 160%;">
 		@foreach ($data as $key => $val)
 		@if ($val['heatScore'] >= 4 && $val['rank'] <= 200)
