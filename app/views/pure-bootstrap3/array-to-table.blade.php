@@ -42,19 +42,20 @@ table a:active  {color:#999;}
 			<a href="/{{{$next}}}"><span class="glyphicon glyphicon-chevron-right"></span> next </a>
 		</h3>
 		<?php
-		if (count($data) > 200) {
+		if (count($data) > 300) {
 			$data_rate = array_map(function ($ar) {return $ar['rate']*100;}, $data);
-			$sd_rate = sd($data_rate);
+			$data_rate = array_slice($data_rate, 0, 300);
+			$sd_rate = number_format(sd($data_rate), 5);
 		} else {
 			$sd_rate = 'N/A';
 		}
 
 		//$data_heat = array_map(function ($ar) {return $ar['heatScore'];}, $data);
 		?>
-		<h4>Standard deviation of 出現率: {{{ $sd_rate }}}</h4>
+		<h4>Standard deviation of 出現率: <b>{{{ $sd_rate }}}</b></h4>
 		<div style="line-height: 160%;">
 		@foreach ($data as $key => $val)
-		@if ($val['heatScore'] >= 4 && $val['rank'] <= 200)
+		@if ($val['heatScore'] >= 4 && $val['rank'] <= 300)
 		<span class="label label-danger">{{{$val['term']}}}</span>
 		@endif
 		@endforeach
@@ -72,7 +73,7 @@ table a:active  {color:#999;}
 			</tr>
 			@foreach ($data as $key => $val)
 			<?php
-				if ($val['rank'] > 200) {
+				if ($val['rank'] > 300) {
 					break;
 				}
 
