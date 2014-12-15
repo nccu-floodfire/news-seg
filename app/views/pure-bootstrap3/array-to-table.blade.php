@@ -45,7 +45,7 @@ table a:active  {color:#999;}
 		if (count($data) > 300) {
 			$data_rate = array_map(function ($ar) {return $ar['rate']*100;}, $data);
 			$data_rate = array_slice($data_rate, 0, 300);
-			$sd_rate = number_format(sd($data_rate), 5);
+			$sd_rate = round(sd($data_rate), 5);
 		} else {
 			$sd_rate = 'N/A';
 		}
@@ -64,11 +64,23 @@ table a:active  {color:#999;}
 		} else {
 			$gb = 205 - (205 / 96 * $heat * $val['rate'] * 10000 / 5);
 		}
-		$gb = number_format($gb);
-		if ($gb < 0) $gb = 0;
+		$gb = round($gb);
+		$g = $gb;
+		$b = $gb;
+		if ($gb < 0) {
+			$b = -$gb;
+			$g = 0;
+		}
+		if ($b > 204) {
+			$red = $red - ($b - 204);
+			$b = 204;
+			if ($red < 100) {
+				$red = 100;
+			}
+		}
 		?>
 		@if (( $val['heatScore'] >= 4 || $val['heatScore'] == 'NEW') && $val['rank'] <= 300)
-		<span class="label" style="background-color: rgb({{{$red}}},{{{$gb}}},{{{$gb}}});">{{{$val['term']}}}</span>
+		<span class="label" style="background-color: rgb({{{$red}}},{{{$g}}},{{{$b}}});">{{{$val['term']}}}</span>
 		@endif
 		@endforeach
 		</div>
@@ -121,7 +133,7 @@ table a:active  {color:#999;}
 				<td>{{ $image }} {{{ $rankDiff }}}</td>
 				<td><a href='https://www.google.com.tw/search?hl=zh-TW&gl=tw&tbm=nws&q={{{ $val['term'] }}}' target="_blank"><span class="glyphicon glyphicon-share-alt"></span></a> {{{ $val['term'] }}}</td>
 				<td>{{{ $val['score'] }}}</td>
-				<td>{{{ number_format($val['rate'] * 100, 2)}}}%</td>
+				<td>{{{ round($val['rate'] * 100, 2)}}}%</td>
 				<td>{{{ $val['heatScore'] }}}</td>
 			</tr>
 			@endforeach
