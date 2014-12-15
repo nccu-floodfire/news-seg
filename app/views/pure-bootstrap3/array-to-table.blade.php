@@ -61,6 +61,7 @@ table a:active  {color:#999;}
 		$red = 205;
 		if ($heat == 'NEW') {
 			$gb = 0;
+			$red = 100;
 		} else {
 			$gb = 205 - (205 / 96 * $heat * $val['rate'] * 10000 / 5);
 		}
