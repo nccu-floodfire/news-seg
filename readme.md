@@ -11,7 +11,7 @@
 
 ## 感謝
 
- * 政大資科系、政大新聞所數位老師、同學之學術指導 （恕不逐一列名）
+ * 政大資科系所、政大傳院數位老師、同學之學術指導 （恕不逐一列名）
  * @ronnywang 的 [NewsDiff](http://newsdiff.g0v.ronny.tw/) 的新聞 Crawler
  * 中研院詞庫小組（斷詞系統）
  * @fukuball 的 [PHP CKIP Client](https://github.com/fukuball/CKIPClient-PHP)
