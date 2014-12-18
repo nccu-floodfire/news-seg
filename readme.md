@@ -1,7 +1,7 @@
 ## NewsSeg
 
  * 將新聞標題與內容即時地斷詞，並計算每日詞頻
- * 展示：http://news-ckip.source.today/
+ * 展示：http://news-seg.source.today/
 
 ## How to start
 
