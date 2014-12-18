@@ -10,7 +10,7 @@
  * `php artisan serve`
 
 ## 感謝
-
+ * 資策會
  * 政大資科系所、政大傳院數位老師、同學之學術指導 （恕不逐一列名）
  * @ronnywang 的 [NewsDiff](http://newsdiff.g0v.ronny.tw/) 的新聞 Crawler
  * 中研院詞庫小組（斷詞系統）
@@ -18,7 +18,6 @@
  * [bootstrap](http://getbootstrap.com) and [Glyphicons](http://glyphicons.com/)
  * [laravel](http://laravel.com/)
  * [jieba 斷詞](https://github.com/fxsjy/jieba)
- * [UniSharp](http://www.unisharp.com) 技術資源
 
 ## Contributors
 
