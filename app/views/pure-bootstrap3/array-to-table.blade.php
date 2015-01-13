@@ -56,7 +56,7 @@ table a:active  {color:#999;}
 		//$data_heat = array_map(function ($ar) {return $ar['heatScore'];}, $data);
 		?>
 		<h4>出現率標準差: <b>{{{ $sd_rate }}}</b></h4>
-		<h4>出現率平均數: <b>{{{ $sd_average }}}</b></h4>
+		<h4>出現率平均數: <b>{{{ $average }}}</b></h4>
 		<div style="line-height: 200%;">
 		@foreach ($data as $key => $val)
 		<?php
