@@ -20,6 +20,7 @@ table a:active  {color:#999;}
 		$prev = "keyword-terms/$keyword/$display/$prev";
 		$next = "keyword-terms/$keyword/$display/$next";
 	}
+	$date_search = str_replace('-', '/', $date);
 ?>
 <button class="btn" data-toggle="modal" data-target="#help-modal">
 	help
@@ -137,7 +138,7 @@ table a:active  {color:#999;}
 			<tr class={{{ $class }}}>
 				<td>{{{ $val['rank'] }}}</td>
 				<td>{{ $image }} {{{ $rankDiff }}}</td>
-				<td><a href='https://www.google.com.tw/search?hl=zh-TW&gl=tw&tbm=nws&q={{{ $val['term'] }}}' target="_blank"><span class="glyphicon glyphicon-share-alt"></span></a> {{{ $val['term'] }}}</td>
+				<td><a href='https://www.google.com.tw/search?hl=zh-TW&gl=tw&tbm=nws&tbs=cdr:1,cd_min:{{{$date_search}}},cd_max:{{{$date_search}}}&q={{{ $val['term'] }}}' target="_blank"><span class="glyphicon glyphicon-share-alt"></span></a> {{{ $val['term'] }}}</td>
 				<td>{{{ $val['score'] }}}</td>
 				<td>{{{ round($val['rate'] * 100, 2)}}}%</td>
 				<td>{{{ $val['heatScore'] }}}</td>
