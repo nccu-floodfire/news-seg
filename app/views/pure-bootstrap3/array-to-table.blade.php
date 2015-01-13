@@ -46,8 +46,8 @@ table a:active  {color:#999;}
 		if (count($data) > 300) {
 			$data_rate = array_map(function ($ar) {return $ar['rate']*100;}, $data);
 			$data_rate = array_slice($data_rate, 0, 300);
-			$sd_rate = round(sd($data_rate), 5);
-			$average = round(array_sum($data_rate) / count($data_rate), 5);
+			$sd_rate = round(sd($data_rate), 2);
+			$average = round(array_sum($data_rate) / count($data_rate), 2);
 		} else {
 			$sd_rate = 'N/A';
 			$average = 'N/A';
@@ -55,9 +55,9 @@ table a:active  {color:#999;}
 
 		//$data_heat = array_map(function ($ar) {return $ar['heatScore'];}, $data);
 		?>
-		<h4>出現率標準差: <b>{{{ $sd_rate }}}</b></h4>
-		<h4>出現率平均數: <b>{{{ $average }}}</b></h4>
-		<h4>出現率變異係數: <b>{{{ round($sd_rate / $average, 5) }}}</b></h4>
+		<h4>出現率標準差: <b>{{{ $sd_rate }}}%</b></h4>
+		<h4>出現率平均數: <b>{{{ $average }}}%</b></h4>
+		<!--<h4>出現率變異係數: <b>{{{ round($sd_rate / $average, 5) }}}</b></h4>-->
 		<div style="line-height: 200%;">
 		@foreach ($data as $key => $val)
 		<?php
