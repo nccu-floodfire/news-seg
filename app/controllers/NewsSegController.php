@@ -96,7 +96,7 @@ class NewsSegController extends BaseController
 		}
 
 		if (!$date) {
-			$date = date('Y-m-d');
+			$date = date('Y-m-d', strtotime('yesterday'));
 		}
 
 		$redis = \RedisL4::connection();
