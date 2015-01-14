@@ -57,7 +57,6 @@ table a:active  {color:#999;}
 		?>
 		<h4>出現率標準差: <b>{{{ $sd_rate }}}%</b></h4>
 		<h4>出現率平均數: <b>{{{ $average }}}%</b></h4>
-		<!--<h4>出現率變異係數: <b>{{{ round($sd_rate / $average, 5) }}}</b></h4>-->
 		<div style="line-height: 200%;">
 		@foreach ($data as $key => $val)
 		<?php
