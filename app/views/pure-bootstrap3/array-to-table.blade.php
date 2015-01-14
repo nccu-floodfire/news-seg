@@ -90,7 +90,7 @@ table a:active  {color:#999;}
         }
 		?>
 		@if (( $val['heatScore'] >= 4 || $val['heatScore'] == 'NEW') && $val['rank'] <= 300)
-		<span class="label" style="background-color: rgb({{{$r}}},{{{$g}}},{{{$b}}});">{{{$val['term']}}}</span>
+		<span class="label" style="background-color: rgb({{{$r}}},{{{$g}}},{{{$b}}});" onclick="window.location.href='#{{{$val['rank']}}}'">{{{$val['term']}}}</span>
 		@endif
 		@endforeach
 		</div>
@@ -139,7 +139,7 @@ table a:active  {color:#999;}
 				}
 			?>
 			<tr class={{{ $class }}}>
-				<td>{{{ $val['rank'] }}}</td>
+				<td><a name="{{{$val['rank']}}}"></a>{{{ $val['rank'] }}}</td>
 				<td>{{ $image }} {{{ $rankDiff }}}</td>
 				<td><a href='https://www.google.com.tw/search?hl=zh-TW&gl=tw&tbm=nws&tbs=cdr:1,cd_min:{{{$date_search}}},cd_max:{{{$date_search}}}&q={{{ $val['term'] }}}' target="_blank"><span class="glyphicon glyphicon-share-alt"></span></a> {{{ $val['term'] }}}</td>
 				<td>{{{ $val['score'] }}}</td>
