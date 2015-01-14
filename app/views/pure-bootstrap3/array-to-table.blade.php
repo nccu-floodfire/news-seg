@@ -46,7 +46,7 @@ table a:active  {color:#999;}
 		<?php
 		if (count($data) > 300) {
 			$data_rate = array_map(function ($ar) {return $ar['rate']*100;}, $data);
-			$data_rate = array_slice($data_rate, 0, 300);
+			$data_rate = array_slice($data_rate, 0, 1000);
 			$sd_rate = round(sd($data_rate), 2);
 			$average = round(array_sum($data_rate) / count($data_rate), 2);
 		} else {
