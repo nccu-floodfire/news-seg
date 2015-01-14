@@ -4,6 +4,7 @@ table a:link	{color:#999;}
 table a:visited {color:#999;}
 table a:hover   {color:#999;}
 table a:active  {color:#999;}
+.hot {color: #B71C1C;}
 </style>
 @section('main')
 <?php
@@ -105,9 +106,11 @@ table a:active  {color:#999;}
 				<th>出現率</th>
 				<th>熱度</th>
 			</tr>
+			<?php $index = 0;?>
 			@foreach ($data as $key => $val)
 			<?php
-				if ($val['rank'] > 300) {
+				if ($val['rank'] > 300) continue;
+				if ($index++ > 300) {
 					break;
 				}
 
@@ -122,7 +125,7 @@ table a:active  {color:#999;}
 					}
 
 					if ($val['isHot'])
-						$class = 'danger';
+						$class = 'hot';
 
 #					if ($rankDiff > 0) {
 #						$class = 'warning';
@@ -134,7 +137,7 @@ table a:active  {color:#999;}
 #						$class = 'danger';
 #					}
 				} else {
-					$class = 'danger';
+					$class = 'hot';
 					$image = '<span class="glyphicon glyphicon-arrow-up"></span>';
 				}
 			?>

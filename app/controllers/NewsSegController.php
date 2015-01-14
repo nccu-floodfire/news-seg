@@ -267,6 +267,18 @@ class NewsSegController extends BaseController
 			}
 			return Response::json($json);
 		}
+		function cmp($a, $b) {
+			if ($a['heatScore'] == 'NEW') $a['heatScore'] = 10000;
+			if ($b['heatScore'] == 'NEW') $b['heatScore'] = 10000;
+			if ($a['heatScore'] == $b['heatScore']) {
+				if ($a['heatScore'] == 10000) {
+					return ($a['rank'] < $b['rank']) ? -1 : 1;
+				}
+				return 0;
+			}
+			return ($a['heatScore'] < $b['heatScore']) ? 1 : -1;
+		}
+		uasort($res, 'cmp');
 
 		return View::make('pure-bootstrap3.array-to-table', array('data' => $res, 'date' => $date, 'keyword' => $keyword, 'display' => $display));
 	}
