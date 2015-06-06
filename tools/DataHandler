@@ -89,13 +89,13 @@ class DataHandler:
         sys.stderr.write('Looping for 0/%d\n' % limit)
         while not isOver:
             try:
-                sql = 'SELECT id, url, time, title, body FROM news LEFT JOIN news_info ON id=news_id WHERE last_fetch_at!=0'
+                sql = 'SELECT id, url, created_at, title, body FROM news LEFT JOIN news_info ON id=news_id WHERE last_fetch_at!=0'
                 if lastId != -1:
                     sql = '%s and id < %d' % (sql, lastId)
                 if startTime != None:
-                    sql = '%s and time >= %s' % (sql, startTime)
+                    sql = '%s and created_at >= %s' % (sql, startTime)
                 if endTime != None:
-                    sql = '%s and time <= %s' % (sql, endTime)
+                    sql = '%s and created_at <= %s' % (sql, endTime)
                 sql = '%s %s' % (sql, 'ORDER BY id DESC LIMIT 1000')
                 if self.debug:
                     sys.stderr.write("DEBUG: SQL=%s\n" % sql)
@@ -135,6 +135,9 @@ class DataHandler:
 
                 handleDataCount += 1;
                 if (keyword == None) or (keyword != None and (keyword in title or keyword in body)):
+                    if (time == None) or (title == None):
+                        lastId = newsId
+                        continue
                     newsDateTime = datetime.datetime.fromtimestamp(time).strftime('%Y-%m-%d')
                     title = title.replace('\r', '')
                     body = body.replace('\r', '')
