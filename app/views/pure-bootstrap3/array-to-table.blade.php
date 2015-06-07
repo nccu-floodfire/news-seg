@@ -8,15 +8,32 @@ table a:active  {color:#999;}
 </style>
 @section('main')
 <?php
-	if ($display === 'day') {
-		$prev = date('Y-m-d', strtotime("{$date} - 1 days"));
-		$next = date('Y-m-d', strtotime("{$date} + 1 days"));
-	} else if ($display === 'week') {
+	$prevQuarter = null;
+	$nextQuarter = null;
+	$prev = date('Y-m-d', strtotime("{$date} - 1 days"));
+	$next = date('Y-m-d', strtotime("{$date} + 1 days"));
+
+	if ($display === 'week') {
 		$prev = date('Y-m-d', strtotime("{$date} - 7 days"));
 		$next = date('Y-m-d', strtotime("{$date} + 7 days"));
 		$startDate = date('Y-m-d', strtotime("{$date} - 6 days"));
 		$date = "$startDate ~ $date";
+	} else if ($display === 'quarterly') {
+		$nextQuarter = $quarter + 1;
+		$prevQuarter = $quarter - 1;
+		$next = $prev = $date;
+		if ($quarter == '0') {
+			$prevQuarter = 3;
+			$prev = date('Y-m-d', strtotime("{$date} - 1 days"));
+		}
+		if ($quarter == '3') {
+			$nextQuarter = 0;
+			$next = date('Y-m-d', strtotime("{$date} + 1 days"));
+		}
+		$prev = $prev . '/' . $prevQuarter;
+		$next = $next . '/' . $nextQuarter;
 	}
+
 	if (isset($keyword)) {
 		$prev = "keyword-terms/$keyword/$display/$prev";
 		$next = "keyword-terms/$keyword/$display/$next";
@@ -40,7 +57,17 @@ table a:active  {color:#999;}
 		@endif
 		<h3>
 			<a href="/{{{$prev}}}">prev <span class="glyphicon glyphicon-chevron-left"></span></a>
-			{{{ $date }}}
+			@if ($quarter)
+				<?php
+				if ($quarter == 0) {$quarter_disp = '00:00 - 05:59';}
+				if ($quarter == 1) {$quarter_disp = '06:00 - 11:59';}
+				if ($quarter == 2) {$quarter_disp = '12:00 - 17:59';}
+				if ($quarter == 3) {$quarter_disp = '18:00 - 23:59';}
+				?>
+				{{{ $date }}} ({{{ $quarter_disp }}})
+			@else
+				{{{ $date }}}
+			@endif
 			<a href="/{{{$next}}}"><span class="glyphicon glyphicon-chevron-right"></span> next </a>
 		</h3>
 		<?php
@@ -88,7 +115,7 @@ table a:active  {color:#999;}
 			$r = 100;
 			$g = 0;
 			$b = 204;
-        }
+		}
 		?>
 		@if (( $val['heatScore'] >= 4 || $val['heatScore'] == 'NEW') && $val['rank'] <= 300)
 		<span class="label" style="background-color: rgb({{{$r}}},{{{$g}}},{{{$b}}});" onclick="window.location.href='#{{{$val['rank']}}}'">{{{$val['term']}}}</span>

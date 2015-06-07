@@ -4,6 +4,13 @@ import sys
 
 class DataHandler:
     DbConfig = {}
+    Opts = {}
+
+    def makeMysqlTime(self, theTime):
+        import time
+        import datetime
+        return time.mktime(datetime.datetime.strptime(theTime, '%Y-%m-%d %H:%M:%S').timetuple())
+
     def getOptions(self):
         import time
         import getopt
@@ -15,13 +22,14 @@ class DataHandler:
         keyword = None
         term = None
         userDict = None
+        date = None
         self.DbConfig['dbname'] = 'newsdiff'
         self.DbConfig['dbuser'] = 'sma'
         self.DbConfig['dbpassword'] = 'amsamsams'
         self.debug = 0
         action = 'get'
 
-        opts, args = getopt.getopt(sys.argv[1:], '', ['action=', 'limit=', 'keyword=', 'term=', 'start-time=', 'end-time=', 'source=', 'userdict=', 'dbname=', 'dbuser=', 'dbpassword=', 'help', 'debug'])
+        opts, args = getopt.getopt(sys.argv[1:], '', ['action=', 'limit=', 'keyword=', 'term=', 'start-time=', 'end-time=', 'source=', 'userdict=', 'dbname=', 'dbuser=', 'dbpassword=', 'date=', 'quarter=', 'help', 'debug'])
         for theOpt in opts:
             if theOpt[0] == '--action':
                 action = theOpt[1]
@@ -40,16 +48,32 @@ class DataHandler:
                 self.DbConfig['dbuser'] = theOpt[1]
             elif theOpt[0] == '--dbpassword':
                 self.DbConfig['dbpassword'] = theOpt[1]
+            elif theOpt[0] == '--date':
+                date = theOpt[1]
+                dateStart = '%s 00:00:00' % (date)
+                dateEnd = '%s 23:59:59' % (date)
+                startTime = self.makeMysqlTime(dateStart)
+            elif theOpt[0] == '--quarter':
+                quarter = theOpt[1]
+                self.Opts['quarter'] = quarter;
+                if quarter == '0':
+                    endTime = self.makeMysqlTime('%s 05:59:59' % (date))
+                if quarter == '1':
+                    endTime = self.makeMysqlTime('%s 11:59:59' % (date))
+                if quarter == '2':
+                    endTime = self.makeMysqlTime('%s 17:59:59' % (date))
+                if quarter == '3':
+                    endTime = self.makeMysqlTime('%s 23:59:59' % (date))
             elif theOpt[0] == '--start-time':
                 theTime = theOpt[1]
                 if not ':' in theTime:
                     theTime = '%s 00:00:00' % (theTime)
-                startTime = time.mktime(datetime.datetime.strptime(theTime, '%Y-%m-%d %H:%M:%S').timetuple())
+                startTime = self.makeMysqlTime(theTime)
             elif theOpt[0] == '--end-time':
                 theTime = theOpt[1]
                 if not ':' in theTime:
                     theTime = '%s 23:59:59' % (theTime)
-                endTime = time.mktime(datetime.datetime.strptime(theTime, '%Y-%m-%d %H:%M:%S').timetuple())
+                endTime = makeMysqlTime(theTime)
             elif theOpt[0] == '--source':
                 source = theOpt[1]
             elif theOpt[0] == '--userdict':
@@ -72,6 +96,8 @@ class DataHandler:
         sys.stderr.write("--dbname=name (default newsdiff)\n")
         sys.stderr.write("--dbuser=user\n")
         sys.stderr.write("--dbpassword=password\n")
+        sys.stderr.write("--date=2015-06-01\n")
+        sys.stderr.write("--quarter=0\n")
 
     def getNews(self, keyword, startTime, endTime, limit):
         import datetime
@@ -105,10 +131,7 @@ class DataHandler:
 
                 total += len(tmpData)
                 if self.debug:
-                    sys.stderr.write("DEBUG: Total=%d\n" % total)
-
-                if len(tmpData) == 0:
-                    break;
+                    sys.stderr.write("DEBUG: %d/%d\n" % (len(tmpData), total))
 
                 sys.stderr.write('Looping for %d/%d\n' % (total, limit))
             except MySQLdb.OperationalError, e:
@@ -126,6 +149,9 @@ class DataHandler:
                             sys.exit(1)
                 continue
 
+
+            sys.stderr.write("DEBUG: in this run: %d\n" % len(tmpData))
+
             for record in tmpData:
                 newsId = record[0]
                 url = record[1]
@@ -137,12 +163,16 @@ class DataHandler:
                 if (keyword == None) or (keyword != None and (keyword in title or keyword in body)):
                     if (time == None) or (title == None):
                         lastId = newsId
+                        if self.debug:
+                            sys.stderr.write("DEBUG: None\n" )
                         continue
                     newsDateTime = datetime.datetime.fromtimestamp(time).strftime('%Y-%m-%d')
                     title = title.replace('\r', '')
                     body = body.replace('\r', '')
                     dataDict = {'Published': newsDateTime, 'SubjectHtml': title, 'TextHtml': body}
                     dataArr.append(dataDict)
+                    if self.debug:
+                        sys.stderr.write("DEBUG: data appended\n" )
 
                 if handleDataCount >= limit:
                     isOver = True
@@ -150,6 +180,10 @@ class DataHandler:
                 lastId = newsId
             # end for record in tmpData
                 # end while
+
+            if len(tmpData) == 0:
+                # nothing left in this run
+                break;
         self.cursor.close()
         self.con.close()
         return dataArr
@@ -178,10 +212,13 @@ class DataHandler:
                     total = total + 1
                     if self.debug and total % 1000 == 0:
                         sys.stderr.write("DEBUG: %d terms added.\n" % total)
-                    if keyword == None:
-                        r.zincrby('CKIP:TERMS:%s' % (article['Published']), term, 1)
+                    if 'quarter' in self.Opts:
+                        r.zincrby('CKIP:TERMS:%s:Q%s' % (article['Published'], self.Opts['quarter']), term, 1)
                     else:
-                        r.zincrby('CKIP:TERMS:%s:%s' % (keyword, article['Published']), term, 1)
+                        if keyword == None:
+                            r.zincrby('CKIP:TERMS:%s' % (article['Published']), term, 1)
+                        else:
+                            r.zincrby('CKIP:TERMS:%s:%s' % (keyword, article['Published']), term, 1)
 
     def delKeys(self, keyword, startTime, endTime):
         import redis

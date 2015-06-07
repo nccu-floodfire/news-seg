@@ -30,11 +30,9 @@ Route::get('/api/news/v1/clearcache/{date}', array( 'as' => 'api.news.clearcache
 
 Route::get('/api/news/v1/all/{date}', 'NewsSegController@apiAllTerms');
 
-Route::get('/', array( 'as' => 'home', 'uses' =>'NewsSegController@index'));
 
 Route::get('/news-terms/{date}', array( 'as' => 'home', 'uses' =>'NewsSegController@index'));
 Route::get('/keyword-terms/{keyword}', array( 'as' => 'home', 'uses' =>'NewsSegController@keywordTerms'));
 Route::get('/keyword-terms/{keyword}/{display}', array( 'as' => 'home', 'uses' =>'NewsSegController@keywordTerms'));
 Route::get('/keyword-terms/{keyword}/{display}/{date}', array( 'as' => 'home', 'uses' =>'NewsSegController@keywordTerms'));
-Route::get('/{date}', array( 'as' => 'home', 'uses' =>'NewsSegController@index'));
-Route::get('/{date}/{all}', array( 'as' => 'home', 'uses' =>'NewsSegController@index'));
+Route::get('/{date?}/{quarter?}/{all?}', array( 'as' => 'home', 'uses' =>'NewsSegController@index'));

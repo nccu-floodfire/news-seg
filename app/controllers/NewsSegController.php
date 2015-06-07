@@ -4,6 +4,8 @@ use \Illuminate\Support\Facades\Cache;
 class NewsSegController extends BaseController
 {
 
+	private $_quarter;
+
 	private function _changeResStruct($theRes, &$black_set, $use_blacklist = false)
 	{
 		$totalScore = 0;
@@ -39,11 +41,9 @@ class NewsSegController extends BaseController
 		return $newRes;
 	}
 
-	public function index($date = null, $all_terms = null)
+	public function index($date = null, $quarter = null, $all_terms = null)
 	{
-		if ($all_terms === null) {
-			$all_terms = Input::get('all');
-		}
+		$this->_quarter = $quarter;
 
 		// 產生每日 json file
 		$generate_json_report = Input::get('json', false);
@@ -90,6 +90,10 @@ class NewsSegController extends BaseController
 			$display = 'day';
 		}
 
+		if (in_array($this->_quarter, array('0', '1', '2', '3'))) {
+			$display = 'quarterly';
+		}
+
 		if (!$date) {
 			$date = Input::get('date');
 			$date = trim($date);
@@ -107,6 +111,12 @@ class NewsSegController extends BaseController
 			} else {
 				$res = $redis->zRevRange("CKIP:TERMS:$date", 0, $dataNum, 'WITHSCORES');
 			}
+		} else if ($display === 'quarterly') {
+			if (isset($keyword)) {
+				$res = $redis->zRevRange("CKIP:TERMS:$keyword:$date:Q{$this->_quarter}", 0, $dataNum, 'WITHSCORES');
+			} else {
+				$res = $redis->zRevRange("CKIP:TERMS:$date:Q{$this->_quarter}", 0, $dataNum, 'WITHSCORES');
+			}
 		} else if ($display === 'week') {
 			if (isset($keyword)) {
 				$redis->zUnionStore('CKIP:TERMS:TEMP', 1, "CKIP:TERMS:$keyword:$date");
@@ -120,11 +130,26 @@ class NewsSegController extends BaseController
 			}
 		}
 		if (count($res) > 0) {
-			$prevDate = date('Y-m-d', strtotime("$date - 1 days"));
-			if (isset($keyword)) {
-				$prevRes = $redis->zRevRange("CKIP:TERMS:$keyword:$prevDate", 0, $dataNum, 'WITHSCORES');
+			$prevDate = $date;
+			$prevRes = array();
+
+			if ($display == 'quarterly') {
+				$prevQuarter = 0;
+				if ($this->_quarter == 0) {
+					$prevDate = date('Y-m-d', strtotime("$date - 1 days"));
+					$prevQuarter = 3;
+				} else {
+					$prevDate = $date;
+					$prevQuarter = $this->_quarter - 1;
+				}
+				$prevRes = $redis->zRevRange("CKIP:TERMS:$prevDate:Q{$prevQuarter}", 0, $dataNum, 'WITHSCORES');
 			} else {
-				$prevRes = $redis->zRevRange("CKIP:TERMS:$prevDate", 0, $dataNum, 'WITHSCORES');
+				$prevDate = date('Y-m-d', strtotime("$date - 1 days"));
+				if (isset($keyword)) {
+					$prevRes = $redis->zRevRange("CKIP:TERMS:$keyword:$prevDate", 0, $dataNum, 'WITHSCORES');
+				} else {
+					$prevRes = $redis->zRevRange("CKIP:TERMS:$prevDate", 0, $dataNum, 'WITHSCORES');
+				}
 			}
 
 			foreach ($redis->sMembers('CKIP:TERMS:BLACK_SET') as $element) {
@@ -139,12 +164,35 @@ class NewsSegController extends BaseController
 				$res = $this->_changeResStruct($res, $black_set, true);
 			}
 
-			for ($i = 30; $i >= 1; $i--) {
-				$theDate = date('Y-m-d', strtotime("$date - $i days"));
-				$theRes = $redis->zRevRange("CKIP:TERMS:$theDate", 0, $dataNum, 'WITHSCORES');
-				if (count($theRes) != 0) {
-					$theRes = $this->_changeResStruct($theRes, $black_set, true);
-					$pastTimeResourses[] = $theRes;
+			if ($display == 'quarterly') {
+				foreach (array('0', '1', '2', '3') as $quarter) {
+					if ($quarter < $this->_quarter) {
+						$theDate = $date;
+						$theRes = $redis->zRevRange("CKIP:TERMS:$theDate:Q$quarter", 0, $dataNum, 'WITHSCORES');
+						if (count($theRes) != 0) {
+							$theRes = $this->_changeResStruct($theRes, $black_set, true);
+							$pastTimeResourses[] = $theRes;
+						}
+					}
+				}
+				for ($i = 3; $i >= 1; $i--) {
+					foreach (array('0', '1', '2', '3') as $quarter) {
+						$theDate = date('Y-m-d', strtotime("$date - $i days"));
+						$theRes = $redis->zRevRange("CKIP:TERMS:$theDate:Q$quarter", 0, $dataNum, 'WITHSCORES');
+						if (count($theRes) != 0) {
+							$theRes = $this->_changeResStruct($theRes, $black_set, true);
+							$pastTimeResourses[] = $theRes;
+						}
+					}
+				}
+			} else {
+				for ($i = 30; $i >= 1; $i--) {
+					$theDate = date('Y-m-d', strtotime("$date - $i days"));
+					$theRes = $redis->zRevRange("CKIP:TERMS:$theDate", 0, $dataNum, 'WITHSCORES');
+					if (count($theRes) != 0) {
+						$theRes = $this->_changeResStruct($theRes, $black_set, true);
+						$pastTimeResourses[] = $theRes;
+					}
 				}
 			}
 
@@ -280,7 +328,16 @@ class NewsSegController extends BaseController
 		}
 		uasort($res, 'cmp');
 
-		return View::make('pure-bootstrap3.array-to-table', array('data' => $res, 'date' => $date, 'keyword' => $keyword, 'display' => $display));
+		return View::make(
+			'pure-bootstrap3.array-to-table',
+			array(
+				'data' => $res,
+				'date' => $date,
+				'keyword' => $keyword,
+				'display' => $display,
+				'quarter' => $this->_quarter,
+			)
+		);
 	}
 
 }
