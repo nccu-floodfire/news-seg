@@ -57,7 +57,7 @@ table a:active  {color:#999;}
 		@endif
 		<h3>
 			<a href="/{{{$prev}}}">prev <span class="glyphicon glyphicon-chevron-left"></span></a>
-			@if ($quarter)
+			@if ($display == 'quarterly')
 				<?php
 				if ($quarter == 0) {$quarter_disp = '00:00 - 05:59';}
 				if ($quarter == 1) {$quarter_disp = '06:00 - 11:59';}
