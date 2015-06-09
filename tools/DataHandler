@@ -73,7 +73,7 @@ class DataHandler:
                 theTime = theOpt[1]
                 if not ':' in theTime:
                     theTime = '%s 23:59:59' % (theTime)
-                endTime = makeMysqlTime(theTime)
+                endTime = self.makeMysqlTime(theTime)
             elif theOpt[0] == '--source':
                 source = theOpt[1]
             elif theOpt[0] == '--userdict':
