@@ -21,6 +21,7 @@
 
 ## Contributors
 
+ * [FloodFire](https://github.com/nccu-floodfire)
  * [@Sam](https://github.com/SamChien), [@twpaddy](https://github.com/twpaddy) and [@youchenlee](https://github.com/youchenlee)
  * [g0v Contributors](http://g0v.tw/)
 
