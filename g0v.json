@@ -1,0 +1,20 @@
+{
+  "repo" :"nccu-floodfire/news-seg",
+  "author" : "youchenlee",
+  "status" : "",
+  "name": "news-seg",
+  "name_zh": "news-seg - 新聞詞頻統計",
+  "description": "news-seg",
+  "description_zh": "news-seg - 新聞詞頻統計",
+  "homepage" : "http://news-seg.source.today/",
+  "thumbnail" : "",
+  "document": "",
+  "repository": "https://github.com/nccu-floodfire/news-seg",
+  "licenses": [],
+  "keywords": [],
+  "audience": [],
+  "products" :[],
+  "partOf": "",
+  "contributors" :[],
+  "needs" : []
+}
